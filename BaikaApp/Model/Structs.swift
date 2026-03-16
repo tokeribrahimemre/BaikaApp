@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+struct Deneme : Decodable {
+    let name: String
+    let price: Double
+    
+}

@@ -7,6 +7,12 @@
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="Nunito-VariableFont_wght.ttf">
+            <string>Nunito-Medium</string>
+            <string>Nunito-Regular</string>
+        </array>
+    </customFonts>
     <scenes>
         <!--Home Page View Controller-->
         <scene sceneID="tne-QT-ifu">
@@ -20,38 +26,158 @@
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="784"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="th4-dg-dKd">
-                                        <rect key="frame" x="0.0" y="0.0" width="393" height="368"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="393" height="562"/>
                                         <subviews>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yfZ-MA-6qL" customClass="CustomStoryCardControl" customModule="BaikaApp" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="393" height="112"/>
-                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EzP-UJ-0dU">
+                                                <rect key="frame" x="0.0" y="0.0" width="393" height="72"/>
+                                                <subviews>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="9pv-7K-86X">
+                                                        <rect key="frame" x="16" y="16" width="361" height="40"/>
+                                                        <subviews>
+                                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="moon" translatesAutoresizingMaskIntoConstraints="NO" id="boQ-uI-bJg">
+                                                                <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="40" id="rCK-u0-U79"/>
+                                                                    <constraint firstAttribute="height" constant="40" id="rKN-WX-gKJ"/>
+                                                                </constraints>
+                                                            </imageView>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Masal Dünyası" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g26-Vv-JjY">
+                                                                <rect key="frame" x="55" y="9.9999999999999982" width="271" height="20.333333333333329"/>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uft-vP-1t0">
+                                                                <rect key="frame" x="341" y="10" width="20" height="20"/>
+                                                                <subviews>
+                                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="star" translatesAutoresizingMaskIntoConstraints="NO" id="t86-F4-YI5">
+                                                                        <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="width" constant="20" id="InH-nc-9a2"/>
+                                                                            <constraint firstAttribute="height" constant="20" id="csd-LA-lRR"/>
+                                                                        </constraints>
+                                                                    </imageView>
+                                                                </subviews>
+                                                                <color key="backgroundColor" red="0.058823529409999999" green="0.054901960780000002" blue="0.1647058824" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="20" id="Hi3-e6-OQo"/>
+                                                                    <constraint firstAttribute="width" constant="20" id="cMF-g3-akb"/>
+                                                                    <constraint firstItem="t86-F4-YI5" firstAttribute="centerY" secondItem="uft-vP-1t0" secondAttribute="centerY" id="lkl-Xx-u75"/>
+                                                                    <constraint firstItem="t86-F4-YI5" firstAttribute="centerX" secondItem="uft-vP-1t0" secondAttribute="centerX" id="xV1-9o-tFR"/>
+                                                                </constraints>
+                                                            </view>
+                                                        </subviews>
+                                                    </stackView>
+                                                </subviews>
+                                                <color key="backgroundColor" red="0.058823529411764705" green="0.054901960784313725" blue="0.16470588235294117" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="112" id="qcg-2S-EZI"/>
+                                                    <constraint firstAttribute="bottom" secondItem="9pv-7K-86X" secondAttribute="bottom" constant="16" id="Wqk-hQ-dkr"/>
+                                                    <constraint firstItem="9pv-7K-86X" firstAttribute="leading" secondItem="EzP-UJ-0dU" secondAttribute="leading" constant="16" id="YF0-h5-dSh"/>
+                                                    <constraint firstAttribute="height" constant="72" id="f6L-9I-xI2"/>
+                                                    <constraint firstItem="9pv-7K-86X" firstAttribute="top" secondItem="EzP-UJ-0dU" secondAttribute="top" constant="16" id="la4-P3-sFX"/>
+                                                    <constraint firstAttribute="trailing" secondItem="9pv-7K-86X" secondAttribute="trailing" constant="16" id="sqm-W0-n4I"/>
                                                 </constraints>
-                                                <connections>
-                                                    <action selector="readStoriesTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xzE-IR-v2x"/>
-                                                </connections>
                                             </view>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L7l-JL-Fq9" customClass="CustomStoryCardControl" customModule="BaikaApp" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="128" width="393" height="112"/>
-                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="osh-I2-aJK">
+                                                <rect key="frame" x="0.0" y="88" width="393" height="90"/>
+                                                <subviews>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="251" axis="vertical" distribution="fillEqually" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="54F-sU-q2K">
+                                                        <rect key="frame" x="16" y="16" width="272.33333333333331" height="54"/>
+                                                        <subviews>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Hoşgeldiniz 👋" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zj1-UV-CFx">
+                                                                <rect key="frame" x="0.0" y="0.0" width="272.33333333333331" height="25"/>
+                                                                <fontDescription key="fontDescription" name="Nunito-Medium" family="Nunito" pointSize="16"/>
+                                                                <color key="textColor" white="1" alpha="0.59773877640845074" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bugun hangi masali okuyalim?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" highlighted="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z6a-bg-cuT">
+                                                                <rect key="frame" x="0.0" y="29" width="272.33333333333331" height="25"/>
+                                                                <fontDescription key="fontDescription" name="Nunito-Regular" family="Nunito" pointSize="20"/>
+                                                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                        </subviews>
+                                                    </stackView>
+                                                </subviews>
+                                                <color key="backgroundColor" red="0.058823529411764705" green="0.054901960784313725" blue="0.16470588235294117" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="112" id="DdZ-OQ-9Se"/>
+                                                    <constraint firstAttribute="height" constant="90" id="EIi-K6-hq8"/>
+                                                    <constraint firstItem="54F-sU-q2K" firstAttribute="top" secondItem="osh-I2-aJK" secondAttribute="top" constant="16" id="QC1-af-gj2"/>
+                                                    <constraint firstAttribute="bottom" secondItem="54F-sU-q2K" secondAttribute="bottom" constant="20" id="TeD-ma-INe"/>
+                                                    <constraint firstItem="54F-sU-q2K" firstAttribute="leading" secondItem="osh-I2-aJK" secondAttribute="leading" constant="16" id="WX6-iw-c64"/>
                                                 </constraints>
-                                                <connections>
-                                                    <action selector="createNewStoryTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="iHx-YI-3a9"/>
-                                                </connections>
                                             </view>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O3h-qO-3OY" customClass="CustomStoryCardControl" customModule="BaikaApp" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="256" width="393" height="112"/>
-                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="112" id="dgt-5d-V8u"/>
-                                                </constraints>
-                                                <connections>
-                                                    <action selector="voiceStoryTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="B6F-l5-1uf"/>
-                                                </connections>
-                                            </view>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="jjT-ni-faG">
+                                                <rect key="frame" x="0.0" y="194" width="393" height="368"/>
+                                                <subviews>
+                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MTj-gR-KNl">
+                                                        <rect key="frame" x="0.0" y="0.0" width="393" height="112"/>
+                                                        <subviews>
+                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yfZ-MA-6qL" customClass="CustomStoryCardControl" customModule="BaikaApp" customModuleProvider="target">
+                                                                <rect key="frame" x="16" y="0.0" width="361" height="112"/>
+                                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="112" id="qcg-2S-EZI"/>
+                                                                </constraints>
+                                                                <connections>
+                                                                    <action selector="readStoriesTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xzE-IR-v2x"/>
+                                                                </connections>
+                                                            </view>
+                                                        </subviews>
+                                                        <color key="backgroundColor" red="0.058823529411764705" green="0.054901960784313725" blue="0.16470588235294117" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <constraints>
+                                                            <constraint firstItem="yfZ-MA-6qL" firstAttribute="leading" secondItem="MTj-gR-KNl" secondAttribute="leading" constant="16" id="1EK-Ld-4Ma"/>
+                                                            <constraint firstAttribute="bottom" secondItem="yfZ-MA-6qL" secondAttribute="bottom" id="814-BO-UjA"/>
+                                                            <constraint firstItem="yfZ-MA-6qL" firstAttribute="top" secondItem="MTj-gR-KNl" secondAttribute="top" id="Tw9-Hf-keu"/>
+                                                            <constraint firstAttribute="trailing" secondItem="yfZ-MA-6qL" secondAttribute="trailing" constant="16" id="yC7-3J-wd0"/>
+                                                        </constraints>
+                                                    </view>
+                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="l17-DP-rQW">
+                                                        <rect key="frame" x="0.0" y="128" width="393" height="112"/>
+                                                        <subviews>
+                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L7l-JL-Fq9" customClass="CustomStoryCardControl" customModule="BaikaApp" customModuleProvider="target">
+                                                                <rect key="frame" x="16" y="0.0" width="361" height="112"/>
+                                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="112" id="DdZ-OQ-9Se"/>
+                                                                </constraints>
+                                                                <connections>
+                                                                    <action selector="createNewStoryTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="iHx-YI-3a9"/>
+                                                                </connections>
+                                                            </view>
+                                                        </subviews>
+                                                        <color key="backgroundColor" red="0.058823529411764705" green="0.054901960784313725" blue="0.16470588235294117" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="trailing" secondItem="L7l-JL-Fq9" secondAttribute="trailing" constant="16" id="5pq-Jy-a0f"/>
+                                                            <constraint firstAttribute="bottom" secondItem="L7l-JL-Fq9" secondAttribute="bottom" id="VDB-z5-DhP"/>
+                                                            <constraint firstItem="L7l-JL-Fq9" firstAttribute="leading" secondItem="l17-DP-rQW" secondAttribute="leading" constant="16" id="cq6-Jy-9nE"/>
+                                                            <constraint firstItem="L7l-JL-Fq9" firstAttribute="top" secondItem="l17-DP-rQW" secondAttribute="top" id="xiC-Fs-IbB"/>
+                                                        </constraints>
+                                                    </view>
+                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QAC-fj-mk7">
+                                                        <rect key="frame" x="0.0" y="256" width="393" height="112"/>
+                                                        <subviews>
+                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O3h-qO-3OY" customClass="CustomStoryCardControl" customModule="BaikaApp" customModuleProvider="target">
+                                                                <rect key="frame" x="16" y="0.0" width="361" height="112"/>
+                                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="112" id="dgt-5d-V8u"/>
+                                                                </constraints>
+                                                                <connections>
+                                                                    <action selector="voiceStoryTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="B6F-l5-1uf"/>
+                                                                </connections>
+                                                            </view>
+                                                        </subviews>
+                                                        <color key="backgroundColor" red="0.058823529411764705" green="0.054901960784313725" blue="0.16470588235294117" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <constraints>
+                                                            <constraint firstItem="O3h-qO-3OY" firstAttribute="top" secondItem="QAC-fj-mk7" secondAttribute="top" id="WVJ-ms-mKe"/>
+                                                            <constraint firstItem="O3h-qO-3OY" firstAttribute="leading" secondItem="QAC-fj-mk7" secondAttribute="leading" constant="16" id="jWw-YH-QqI"/>
+                                                            <constraint firstAttribute="bottom" secondItem="O3h-qO-3OY" secondAttribute="bottom" id="lAW-xf-noi"/>
+                                                            <constraint firstAttribute="trailing" secondItem="O3h-qO-3OY" secondAttribute="trailing" constant="16" id="r2G-SN-II4"/>
+                                                        </constraints>
+                                                    </view>
+                                                </subviews>
+                                            </stackView>
                                         </subviews>
                                     </stackView>
                                 </subviews>
@@ -80,6 +206,7 @@
                     <connections>
                         <outlet property="createNewStoryCard" destination="L7l-JL-Fq9" id="AJH-JK-dT6"/>
                         <outlet property="readStoriesCard" destination="yfZ-MA-6qL" id="K4w-OF-fFt"/>
+                        <outlet property="starIconImageView" destination="t86-F4-YI5" id="AxD-vz-d7G"/>
                         <outlet property="voiceStoryCard" destination="O3h-qO-3OY" id="3Av-SH-PdN"/>
                     </connections>
                 </viewController>
@@ -90,10 +217,9 @@
         <!--Navigation Controller-->
         <scene sceneID="seh-cn-6dZ">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="gIE-lD-qlO" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="gIE-lD-qlO" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="B3n-VL-gUe">
-                        <rect key="frame" x="0.0" y="118" width="393" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -107,6 +233,8 @@
         </scene>
     </scenes>
     <resources>
+        <image name="moon" width="40" height="40"/>
+        <image name="star" width="22" height="22"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
