@@ -9,27 +9,44 @@ import UIKit
 
 class StoriesViewController: UIViewController {
     
-    
-    @IBOutlet weak var backButton: UIButton!
     var shouldShowBackButton = false
     
+    private let viewModel = StoriesViewModel()
+    
+    @IBOutlet weak var emptyStateView: UIView!
+    @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var agesCollectionView: UICollectionView!
     @IBOutlet weak var themCollectionView: UICollectionView!
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var tableView: DynamicHeightTableView!
     
-
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         if !shouldShowBackButton {
             backButton.isUserInteractionEnabled = false
             backButton.setImage(.moon, for: .normal)
         }
-        
         self.title = "Hikayeler"
         registerCells()
+        bindViewModel()
+        viewModel.fetchStories()
+        
         // Do any additional setup after loading the view.
     }
+    
+    private func bindViewModel() {
+            viewModel.onStoriesUpdated = { [weak self] in
+                guard let self = self else { return }
+                self.tableView.reloadData()
+                self.updateEmptyState()
+            }
+            
+            viewModel.onError = { [weak self] errorMessage in
+                let alert = UIAlertController(title: "Hata", message: errorMessage, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+                self?.present(alert, animated: true)
+            }
+        }
 
     private func registerCells(){
         let collectionCellNib = UINib(nibName: "StoriesCollectionViewCell", bundle: nil)
@@ -48,11 +65,21 @@ class StoriesViewController: UIViewController {
         tableView.delegate = self
         
         tableView.backgroundColor = AppColors.background
-        
-        
-        
-        
+                                
     }
+     
+             
+
+                
+    
+    
+    
+    func updateEmptyState() {
+        tableView.isHidden = viewModel.isEmpty
+        emptyStateView.isHidden = !viewModel.isEmpty
+            
+    }
+    
     
     @IBAction func backButtonTapped(_ sender: Any) {
         
@@ -71,24 +98,67 @@ class StoriesViewController: UIViewController {
 
 }
 extension StoriesViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
-    }
+           if collectionView == agesCollectionView {
+               return viewModel.ageFilters.count
+           } else {
+               return viewModel.themeFilters.count
+           }
+       }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StoriesCVCell", for: indexPath) as! StoriesCollectionViewCell
-        
-        return cell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StoriesCVCell", for: indexPath) as! StoriesCollectionViewCell
+            
+            var isCellSelected: Bool
+            
+            if collectionView == agesCollectionView {
+                let filter = viewModel.ageFilters[indexPath.row]
+                cell.titleLabel.text = filter.title
+                isCellSelected = viewModel.isAgeSelected(at: indexPath.row)
+            } else {
+                let filter = viewModel.themeFilters[indexPath.row]
+                cell.titleLabel.text = filter.title
+                isCellSelected = viewModel.isThemeSelected(at: indexPath.row)
+            }
+            
+            if isCellSelected {
+                cell.layer.borderWidth = 1.5
+                cell.backgroundColor = UIColor(hex: "A8D8EA").withAlphaComponent(0.2)
+                cell.layer.borderColor = UIColor(hex: "A8D8EA").withAlphaComponent(0.3).cgColor
+                cell.titleLabel.textColor = UIColor(hex: "A8D8EA").withAlphaComponent(1)
+            } else {
+                cell.backgroundColor = .clear
+                cell.layer.borderWidth = 1.0
+                cell.layer.borderColor = UIColor(hex: "000000").withAlphaComponent(0.0).cgColor
+                cell.titleLabel.textColor = UIColor(hex: "FFFFFF").withAlphaComponent(0.6)
+            }
+            
+            return cell
+        }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == agesCollectionView {
+            viewModel.toggleAgeFilter(at: indexPath.row)
+            agesCollectionView.reloadData()
+        } else {
+            viewModel.toggleThemeFilter(at: indexPath.row)
+            themCollectionView.reloadData()
+        }
     }
     
+                            
 }
 
 extension StoriesViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return viewModel.numberOfStories
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "StoriesTVCell", for: indexPath) as! StoriesTableViewCell
-        return cell
-    }
+            let cell = tableView.dequeueReusableCell(withIdentifier: "StoriesTVCell", for: indexPath) as! StoriesTableViewCell
+            let story = viewModel.story(at: indexPath.row)
+            cell.configureCell(with: story)
+            return cell
+        }
 }

@@ -24,17 +24,24 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Rc-YY-xGI">
                         <rect key="frame" x="0.0" y="0.0" width="108" height="50"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Jga-CV-XxL">
-                                <rect key="frame" x="8" y="8" width="92" height="34"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Jga-CV-XxL">
+                                <rect key="frame" x="16" y="8" width="76" height="34"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="👶" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NUb-9S-EDC">
-                                        <rect key="frame" x="0.0" y="8.5" width="42" height="17"/>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="zero_two" translatesAutoresizingMaskIntoConstraints="NO" id="YL8-hB-1Kg">
+                                        <rect key="frame" x="0.0" y="6.5" width="17" height="21"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="17" id="2EZ-RH-6wM"/>
+                                            <constraint firstAttribute="height" constant="21" id="hMf-yu-9oI"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="👶" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NUb-9S-EDC">
+                                        <rect key="frame" x="21" y="8.5" width="0.0" height="17"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3-4 Yaş" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eJB-LG-mdC">
-                                        <rect key="frame" x="50" y="0.0" width="42" height="34"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3-4 Yaş" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eJB-LG-mdC">
+                                        <rect key="frame" x="25" y="7.5" width="51" height="19.5"/>
                                         <fontDescription key="fontDescription" name="Nunito-Medium" family="Nunito" pointSize="14"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
@@ -45,8 +52,8 @@
                         <color key="backgroundColor" red="0.074509803920000006" green="0.1333333333" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="Jga-CV-XxL" firstAttribute="top" secondItem="5Rc-YY-xGI" secondAttribute="top" constant="8" id="0ES-2q-AMR"/>
-                            <constraint firstAttribute="trailing" secondItem="Jga-CV-XxL" secondAttribute="trailing" constant="8" id="5E5-V5-4JX"/>
-                            <constraint firstItem="Jga-CV-XxL" firstAttribute="leading" secondItem="5Rc-YY-xGI" secondAttribute="leading" constant="8" id="H8o-jB-u91"/>
+                            <constraint firstAttribute="trailing" secondItem="Jga-CV-XxL" secondAttribute="trailing" constant="16" id="5E5-V5-4JX"/>
+                            <constraint firstItem="Jga-CV-XxL" firstAttribute="leading" secondItem="5Rc-YY-xGI" secondAttribute="leading" constant="16" id="H8o-jB-u91"/>
                             <constraint firstAttribute="bottom" secondItem="Jga-CV-XxL" secondAttribute="bottom" constant="8" id="iAf-nf-w6k"/>
                         </constraints>
                     </view>
@@ -67,4 +74,7 @@
             <point key="canvasLocation" x="-258.01526717557249" y="110.56338028169014"/>
         </collectionViewCell>
     </objects>
+    <resources>
+        <image name="zero_two" width="17" height="21"/>
+    </resources>
 </document>

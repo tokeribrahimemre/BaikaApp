@@ -5,6 +5,7 @@
 //  Created by İbrahim Emre Toker on 15.03.2026.
 //
 import Foundation
+import FirebaseFirestore
 
 enum WebServiceError: Error {
     case serverError
@@ -13,19 +14,26 @@ enum WebServiceError: Error {
 
 
 class WebServices {
-    func downloadData(url: URL, completion: @escaping (Result<[Deneme], WebServiceError>) -> Void) {
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            
-            if let error = error {
-                completion(.failure(.serverError))
-            } else if let data = data {
-                let myResult =  try? JSONDecoder().decode([Deneme].self, from: data)
-                if let myResult = myResult {
-                    completion(.success(myResult))
-                } else {
-                    completion(.failure(.parsinError))
+    private let db = Firestore.firestore()
+        
+        func fetchStories(completion: @escaping (Result<[Story], Error>) -> Void) {
+            db.collection("stories").getDocuments { snapshot, error in
+                if let error = error {
+                    completion(.failure(error))
+                    return
                 }
+                
+                guard let documents = snapshot?.documents else {
+                    completion(.success([]))
+                    return
+                }
+                
+                let stories = documents.map { doc in
+                    Story(id: doc.documentID, dictionary: doc.data())
+                }
+                
+                completion(.success(stories))
             }
         }
-    }
 }
+
