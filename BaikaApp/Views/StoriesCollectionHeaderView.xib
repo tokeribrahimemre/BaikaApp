@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="Nunito-Regular.ttf">
+            <string>Nunito-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner">
+            <connections>
+                <outlet property="headerLabel" destination="CVF-UV-MnA" id="rv8-Vi-eqS"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionReusableView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="StoriesCVHeaderView" id="U6b-Vx-4bR" customClass="StoriesCollectionHeaderView" customModule="BaikaApp" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="26"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NsT-7W-AOI">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="26"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Yaş Grubu" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CVF-UV-MnA">
+                            <rect key="frame" x="16" y="0.0" width="55" height="18"/>
+                            <fontDescription key="fontDescription" name="Nunito-Regular" family="Nunito" pointSize="12"/>
+                            <color key="textColor" red="1" green="1" blue="1" alpha="0.40000000000000002" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="0.058823529409999999" green="0.054901960780000002" blue="0.1647058824" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstItem="CVF-UV-MnA" firstAttribute="leading" secondItem="NsT-7W-AOI" secondAttribute="leading" constant="16" id="0tz-bH-rAn"/>
+                        <constraint firstAttribute="width" constant="320" id="9vO-B7-nU6"/>
+                        <constraint firstItem="CVF-UV-MnA" firstAttribute="top" secondItem="NsT-7W-AOI" secondAttribute="top" id="b7r-Y6-l5u"/>
+                        <constraint firstAttribute="height" constant="26" id="oyL-Gt-wXw"/>
+                        <constraint firstAttribute="bottom" secondItem="CVF-UV-MnA" secondAttribute="bottom" constant="8" id="r2T-ux-16i"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="VXr-Tz-HHm"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="NsT-7W-AOI" secondAttribute="bottom" id="JIY-Of-zLa"/>
+                <constraint firstAttribute="trailing" secondItem="NsT-7W-AOI" secondAttribute="trailing" id="UOe-E7-9Rn"/>
+                <constraint firstItem="NsT-7W-AOI" firstAttribute="top" secondItem="U6b-Vx-4bR" secondAttribute="top" id="rqo-M0-Ox8"/>
+                <constraint firstItem="NsT-7W-AOI" firstAttribute="leading" secondItem="U6b-Vx-4bR" secondAttribute="leading" id="yyq-hj-Ybs"/>
+            </constraints>
+            <point key="canvasLocation" x="-296.18320610687022" y="148.2394366197183"/>
+        </collectionReusableView>
+    </objects>
+</document>

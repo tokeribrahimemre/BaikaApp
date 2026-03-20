@@ -133,9 +133,17 @@ class HomePageViewController: UIViewController {
                                 
     }
     
-    @IBAction func readStoriesTapped(_ sender: Any) {
-        print("Stories card tapped")
-        tabBarController?.selectedIndex = 1
+   // HomePageViewController.swift içinde
+   
+   
+    @IBAction func readStoriesCardTapped(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Stories", bundle: nil)
+           if let storiesVC = storyboard.instantiateViewController(withIdentifier: "StoriesViewController") as? StoriesViewController {
+               storiesVC.hidesBottomBarWhenPushed = true
+               storiesVC.shouldShowBackButton = true
+               navigationController?.pushViewController(storiesVC, animated: true)
+           }
+        
     }
     
     @IBAction func createNewStoryTapped(_ sender: Any) {

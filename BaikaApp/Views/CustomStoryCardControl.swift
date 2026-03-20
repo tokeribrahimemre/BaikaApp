@@ -45,6 +45,7 @@ class CustomStoryCardControl: UIControl {
             
             self.clipsToBounds = true
             self.layer.cornerRadius = 24
+            self.backgroundColor = UIColor(hex: "0F0E2A")
             
             // Gradient layer'ı en alta ekle
             gradientLayer.cornerRadius = 24
