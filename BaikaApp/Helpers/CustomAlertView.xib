@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CustomAlertView" customModule="ZTTestProject" customModuleProvider="target">
+            <connections>
+                <outlet property="closeButton" destination="YLP-rA-l7j" id="ufP-Sh-MQy"/>
+                <outlet property="messageLabel" destination="VVU-nH-Lh9" id="140-HM-1lO"/>
+                <outlet property="scrollView" destination="Qki-ab-97f" id="GL2-j0-00z"/>
+                <outlet property="secondLabel" destination="wui-yZ-Nye" id="ZzQ-2w-5GS"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clipsSubviews="YES" contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="350" height="364"/>
+            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qki-ab-97f">
+                    <rect key="frame" x="0.0" y="59" width="350" height="271"/>
+                    <subviews>
+                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="eVG-Rn-YnM">
+                            <rect key="frame" x="0.0" y="0.0" width="350" height="271"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" preservesSuperviewLayoutMargins="YES" text="adam" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wui-yZ-Nye">
+                                    <rect key="frame" x="0.0" y="0.0" width="350" height="20.333333333333332"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="249" text="Adam" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VVU-nH-Lh9">
+                                    <rect key="frame" x="0.0" y="25.333333333333329" width="350" height="190.66666666666669"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YLP-rA-l7j">
+                                    <rect key="frame" x="0.0" y="221" width="350" height="50"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="50" id="Z5X-UK-bXC"/>
+                                    </constraints>
+                                    <state key="normal" title="Button"/>
+                                    <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                                    <connections>
+                                        <action selector="dismiss:" destination="-1" eventType="touchUpInside" id="b36-8A-rOu"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="350" id="KtG-6a-NpK"/>
+                            </constraints>
+                        </stackView>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="eVG-Rn-YnM" firstAttribute="width" secondItem="Qki-ab-97f" secondAttribute="width" id="12E-rm-amP"/>
+                        <constraint firstItem="eVG-Rn-YnM" firstAttribute="top" secondItem="Qki-ab-97f" secondAttribute="top" id="AEu-5b-4dj"/>
+                        <constraint firstAttribute="bottom" secondItem="eVG-Rn-YnM" secondAttribute="bottom" id="XgT-ff-AxA"/>
+                        <constraint firstAttribute="trailing" secondItem="eVG-Rn-YnM" secondAttribute="trailing" id="b6w-TO-M9R"/>
+                        <constraint firstItem="eVG-Rn-YnM" firstAttribute="height" secondItem="Qki-ab-97f" secondAttribute="height" priority="250" id="ni2-WP-fS0"/>
+                        <constraint firstItem="eVG-Rn-YnM" firstAttribute="leading" secondItem="Qki-ab-97f" secondAttribute="leading" id="pbO-aP-o6l"/>
+                    </constraints>
+                </scrollView>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="Qki-ab-97f" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="BJn-8T-NL4"/>
+                <constraint firstItem="Qki-ab-97f" firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailing" id="J3b-A6-IiF"/>
+                <constraint firstItem="Qki-ab-97f" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="T9f-wX-x0j"/>
+                <constraint firstItem="Qki-ab-97f" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="d1m-zN-aXt"/>
+                <constraint firstItem="Qki-ab-97f" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="kgd-it-3zs"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="Qki-ab-97f" secondAttribute="bottom" id="mIf-Yp-TmO"/>
+                <constraint firstItem="Qki-ab-97f" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="nNV-M9-6pa"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="143.5114503816794" y="-100"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
