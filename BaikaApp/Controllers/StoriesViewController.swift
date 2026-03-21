@@ -29,9 +29,14 @@ class StoriesViewController: UIViewController {
         self.title = "Hikayeler"
         registerCells()
         bindViewModel()
-        viewModel.fetchStories()
+        
         
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.fetchStories() // veya veri çekme metodunuz her ne ise
     }
     
     private func bindViewModel() {
@@ -161,4 +166,8 @@ extension StoriesViewController: UITableViewDelegate, UITableViewDataSource {
             cell.configureCell(with: story)
             return cell
         }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        showCustomAlert(message: viewModel.story(at: indexPath.row).description)
+    }
 }

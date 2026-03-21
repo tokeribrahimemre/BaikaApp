@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "BB7A9C9D-0CBC-432E-9DF3-312A5512D6AD"
+            uuid = "45B9E243-4F77-461F-B34A-585BEDAC59BD"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BaikaApp/Controllers/StoriesViewController.swift"
+            filePath = "BaikaApp/Services/WebServices.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "155"
-            endingLineNumber = "155"
-            landmarkName = "tableView(_:numberOfRowsInSection:)"
+            startingLineNumber = "38"
+            endingLineNumber = "38"
+            landmarkName = "fetchStories(completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

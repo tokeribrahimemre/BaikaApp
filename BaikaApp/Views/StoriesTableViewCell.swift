@@ -18,8 +18,7 @@ class StoriesTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        
-        
+        self.backgroundColor = .clear
         contentView.backgroundColor = .clear
         self.selectionStyle = .none
         

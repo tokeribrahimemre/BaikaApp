@@ -17,12 +17,12 @@ class WebServices {
     private let db = Firestore.firestore()
         
         func fetchStories(completion: @escaping (Result<[Story], Error>) -> Void) {
+            IndicatorView.shared.showIndicator()
             db.collection("stories").getDocuments { snapshot, error in
                 if let error = error {
                     completion(.failure(error))
                     return
                 }
-                
                 guard let documents = snapshot?.documents else {
                     completion(.success([]))
                     return
@@ -34,6 +34,7 @@ class WebServices {
                 
                 completion(.success(stories))
             }
+            IndicatorView.shared.removeIndicator()
         }
 }
 

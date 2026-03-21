@@ -14,18 +14,20 @@ struct Deneme : Decodable {
 }
 struct Story {
      let id: String
+     let time: String
      let title: String
      let description: String
-     let imageUrl: String
+     let imageURL: String
      let ageCategory: String
      let themeCategory: String
      let isFavorite: Bool
      
      init(id: String, dictionary: [String: Any]) {
          self.id = id
+         self.time = dictionary["time"] as? String ?? ""
          self.title = dictionary["title"] as? String ?? ""
          self.description = dictionary["description"] as? String ?? ""
-         self.imageUrl = dictionary["imageUrl"] as? String ?? ""
+         self.imageURL = dictionary["imageURL"] as? String ?? ""
          self.ageCategory = dictionary["ageCategory"] as? String ?? ""
          self.themeCategory = dictionary["themeCategory"] as? String ?? ""
          self.isFavorite = dictionary["isFavorite"] as? Bool ?? false
