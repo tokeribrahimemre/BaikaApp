@@ -113,11 +113,11 @@ extension StoriesViewController: UICollectionViewDelegate, UICollectionViewDataS
             
             if collectionView == agesCollectionView {
                 let filter = viewModel.ageFilters[indexPath.row]
-                cell.titleLabel.text = filter.title
+                cell.configureCell(with: filter.title)
                 isCellSelected = viewModel.isAgeSelected(at: indexPath.row)
             } else {
                 let filter = viewModel.themeFilters[indexPath.row]
-                cell.titleLabel.text = filter.title
+                cell.configureCell(with: filter.title)
                 isCellSelected = viewModel.isThemeSelected(at: indexPath.row)
             }
             

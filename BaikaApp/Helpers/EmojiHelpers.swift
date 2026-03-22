@@ -42,8 +42,14 @@ final class EmojiImageHelper {
         "music": "🎵",
         "uyku": "😴",
         "sleep": "😴",
-        "iyilik": "✨",
-        "kindness": "✨",
+        "iyilik": "💛",
+        "kindness": "💛",
+        "0-2 yaş": "👶",
+        "0-2 years": "👶",
+        "3-4 yaş": "🧒",
+        "3-4 years": "🧒",
+        "5-6 yaş": "👦",
+        "5-6 years": "👦"
     ]
     
     static let defaultEmoji = "📖"

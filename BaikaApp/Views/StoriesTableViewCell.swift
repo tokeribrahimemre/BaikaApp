@@ -10,10 +10,14 @@ import UIKit
 class StoriesTableViewCell: UITableViewCell {
     
     @IBOutlet weak var innerView: UIView!
-    
-    
     @IBOutlet weak var ageView: UIView!
+    
     @IBOutlet weak var ageLabel: UILabel!
+    @IBOutlet weak var storyImageView: UIImageView!
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var timeLabel: UILabel!
+    @IBOutlet weak var emojiImageView: UIImageView!
+    @IBOutlet weak var themeLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -22,6 +26,11 @@ class StoriesTableViewCell: UITableViewCell {
         contentView.backgroundColor = .clear
         self.selectionStyle = .none
         
+    }
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        storyImageView.image = nil
+        emojiImageView.image = nil
     }
     override func layoutSubviews() {
         ageView.layer.cornerRadius = 16
@@ -36,6 +45,10 @@ class StoriesTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     func configureCell(with story: Story) {
-        ageLabel.text = story.ageCategory
+        storyImageView.loadImage(from: story.imageURL)
+        titleLabel.text = story.title
+        timeLabel.text = story.time
+        emojiImageView.setThemeEmoji(story.themeCategory)
+        themeLabel.text = story.themeCategory
     }
 }

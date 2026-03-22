@@ -33,7 +33,7 @@ class StoriesViewModel {
         FilterCategory(title: "Arkadaşlık", iconName: "heart_icon", id: "Arkadaşlık"),
         FilterCategory(title: "Uyku", iconName: "moon_icon", id: "Uyku"),
         FilterCategory(title: "Macera", iconName: "map_icon", id: "Macera"),
-        FilterCategory(title: "İyilik", iconName: "sleep_icon", id: "İyilik")
+        FilterCategory(title: "Iyilik", iconName: "heart_icon", id: "Iyilik")
     ]
     
     // View'ı bilgilendirmek için closure'lar

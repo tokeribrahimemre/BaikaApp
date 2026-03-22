@@ -132,7 +132,12 @@
             <connections>
                 <outlet property="ageLabel" destination="EKt-bw-CsU" id="un8-h8-hqR"/>
                 <outlet property="ageView" destination="9yY-iG-Bv0" id="hc1-Gx-Nvq"/>
+                <outlet property="emojiImageView" destination="tNn-wV-gpE" id="vwt-PH-KIV"/>
                 <outlet property="innerView" destination="UPb-st-T89" id="iF7-JI-FVW"/>
+                <outlet property="storyImageView" destination="2kk-Yp-l92" id="7eL-Af-Cd1"/>
+                <outlet property="themeLabel" destination="1sz-hk-7Pp" id="Cnp-ch-wwa"/>
+                <outlet property="timeLabel" destination="IzS-a6-np1" id="7HL-2y-Byy"/>
+                <outlet property="titleLabel" destination="IYr-W3-GoL" id="smS-nY-q7M"/>
             </connections>
             <point key="canvasLocation" x="138.93129770992365" y="155.28169014084509"/>
         </tableViewCell>
