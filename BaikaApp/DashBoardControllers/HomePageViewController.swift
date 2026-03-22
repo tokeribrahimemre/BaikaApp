@@ -136,13 +136,8 @@ class HomePageViewController: UIViewController {
    // HomePageViewController.swift içinde
    
    
-    @IBAction func readStoriesCardTapped(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "Stories", bundle: nil)
-           if let storiesVC = storyboard.instantiateViewController(withIdentifier: "StoriesViewController") as? StoriesViewController {
-               storiesVC.hidesBottomBarWhenPushed = true
-               storiesVC.shouldShowBackButton = true
-               navigationController?.pushViewController(storiesVC, animated: true)
-           }
+    @IBAction func readStoriesCardTapped(_ sender: Any) {        
+        tabBarController?.selectedIndex = 1
         
     }
     

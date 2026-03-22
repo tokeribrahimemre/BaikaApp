@@ -14,6 +14,7 @@ public final class IndicatorView {
 
     private var loadingIndicator: UIActivityIndicatorView?
     private var loadingStartTime: Date?
+    private var overlayView: UIView?
 
     private init() { }
 
@@ -39,16 +40,24 @@ public final class IndicatorView {
                 return
             }
 
+            // Overlay — tüm ekranı kaplar ve dokunmaları engeller
+            let overlay = UIView(frame: window.bounds)
+            overlay.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+            overlay.isUserInteractionEnabled = true
+            overlay.tag = 99998
+            overlay.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            window.addSubview(overlay)
+
             let indicator = UIActivityIndicatorView(style: .large)
             indicator.color = .white
             indicator.hidesWhenStopped = true
-            indicator.center = window.center
+            indicator.center = overlay.center
             indicator.tag = 99999
 
-            window.addSubview(indicator)
-            window.bringSubviewToFront(indicator)
+            overlay.addSubview(indicator)
             indicator.startAnimating()
 
+            self.overlayView = overlay
             self.loadingIndicator = indicator
             self.loadingStartTime = Date()
 
@@ -79,6 +88,8 @@ public final class IndicatorView {
         self.loadingIndicator?.stopAnimating()
         self.loadingIndicator?.removeFromSuperview()
         self.loadingIndicator = nil
+        self.overlayView?.removeFromSuperview()
+        self.overlayView = nil
         self.loadingStartTime = nil
     }
 }

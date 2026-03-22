@@ -6,41 +6,31 @@ class SettingsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        uploadMockDataToFirebase()
         // Do any additional setup after loading the view.
     }
-}
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
     
-//    func uploadMockDataToFirebase() {
-//        let db = Firestore.firestore()
-//        
-//        let storiesToUpload: [Story] = [
-//            Story(
-//                id: "1", dictionary: [
-//                    "time": "5 dk",
-//                    "title": "Kırmızı Başlıklı Kız",
-//                    "description": """
-//                Bir zamanlar, ormanın hemen kenarındaki sevimli bir kulübede yaşayan tatlı bir kız varmış. Büyükannesi onu o kadar çok severmiş ki, ona kendi elleriyle kırmızı kadifeden pelerinli bir başlık dikmiş. Kız bu başlığı o kadar sevmiş ki hiç çıkarmamış, bu yüzden herkes ona 'Kırmızı Başlıklı Kız' demeye başlamış.
-//                
-//                Güneşli bir ilkbahar sabahı, annesi onu yanına çağırmış. "Kırmızı Başlıklı Kız, büyükannen biraz hasta olmuş. Ona kendi yaptığım taze çöreklerden ve bir şişe meyve suyundan hazırladım. Lütfen bunları ona götür ama orman yolundan sakın ayrılma, oyalanma ve yabancılarla konuşma," diye tembihlemiş. Kırmızı Başlıklı Kız sepetini koluna takmış ve annesine söz vererek yola koyulmuş.
-//                
-//                Ormanın içi rengarenk çiçekler, cıvıl cıvıl öten kuşlarla doluymuş. Kırmızı Başlıklı Kız, büyükannesine güzel bir buket yapmak için yolun kenarındaki çiçekleri toplamaya dalmış. O sırada kurnaz bir kurt onu ağaçların arkasından izliyormuş. Kurt, kızın yanına yaklaşıp nazikçe "Nereye gidiyorsun küçük kız?" diye sormuş. Kırmızı Başlıklı Kız, annesinin sözünü unutup "Büyükanneme gidiyorum, ormanın sonundaki üç büyük meşe ağacının altındaki evde oturuyor," demiş.
-//                
-//                Bunu duyan kurt hızla oradan uzaklaşmış ve kestirme yoldan büyükannenin evine varmış. Olan biteni anlayan bir oduncu ise kurdun peşine düşmüş. Kırmızı Başlıklı Kız eve vardığında kurdun oyununu fark etmiş, tam o sırada oduncu içeri girip kurnaz kurdu ormandan çok uzaklara kovalamış. Büyükannesi ve Kırmızı Başlıklı Kız, oduncuya teşekkür edip taze çörekleri afiyetle yemişler. Kırmızı Başlıklı Kız bir daha annesinin sözünden hiç çıkmamış.
-//                """,
-//                    "imageURL": "red_hood_bg",
-//                    "ageCategory": "5-6 Yas",
-//                    "themeCategory": "Macera"
-//                ]
+    func uploadMockDataToFirebase() {
+        let db = Firestore.firestore()
+        
+        let storiesToUpload: [Story] = [
+            Story(
+                id: "1", dictionary: [
+                    "time": "5 dk",
+                    "title": "Kara Başlıklı Kız",
+                    "description": """
+                Bir zamanlar, ormanın hemen kenarındaki sevimli bir kulübede yaşayan tatlı bir kız varmış. Büyükannesi onu o kadar çok severmiş ki, ona kendi elleriyle kırmızı kadifeden pelerinli bir başlık dikmiş. Kız bu başlığı o kadar sevmiş ki hiç çıkarmamış, bu yüzden herkes ona 'Kırmızı Başlıklı Kız' demeye başlamış.
+                
+                Güneşli bir ilkbahar sabahı, annesi onu yanına çağırmış. "Kırmızı Başlıklı Kız, büyükannen biraz hasta olmuş. Ona kendi yaptığım taze çöreklerden ve bir şişe meyve suyundan hazırladım. Lütfen bunları ona götür ama orman yolundan sakın ayrılma, oyalanma ve yabancılarla konuşma," diye tembihlemiş. Kırmızı Başlıklı Kız sepetini koluna takmış ve annesine söz vererek yola koyulmuş.
+                
+                Ormanın içi rengarenk çiçekler, cıvıl cıvıl öten kuşlarla doluymuş. Kırmızı Başlıklı Kız, büyükannesine güzel bir buket yapmak için yolun kenarındaki çiçekleri toplamaya dalmış. O sırada kurnaz bir kurt onu ağaçların arkasından izliyormuş. Kurt, kızın yanına yaklaşıp nazikçe "Nereye gidiyorsun küçük kız?" diye sormuş. Kırmızı Başlıklı Kız, annesinin sözünü unutup "Büyükanneme gidiyorum, ormanın sonundaki üç büyük meşe ağacının altındaki evde oturuyor," demiş.
+                
+                Bunu duyan kurt hızla oradan uzaklaşmış ve kestirme yoldan büyükannenin evine varmış. Olan biteni anlayan bir oduncu ise kurdun peşine düşmüş. Kırmızı Başlıklı Kız eve vardığında kurdun oyununu fark etmiş, tam o sırada oduncu içeri girip kurnaz kurdu ormandan çok uzaklara kovalamış. Büyükannesi ve Kırmızı Başlıklı Kız, oduncuya teşekkür edip taze çörekleri afiyetle yemişler. Kırmızı Başlıklı Kız bir daha annesinin sözünden hiç çıkmamış.
+                """,
+                    "imageURL": "red_hood_bg",
+                    "ageCategory": "5-6 Yaş",
+                    "themeCategory": "İyilik"
+                ])
 //            ),
 //            Story(
 //                id: "2", dictionary: [
@@ -206,23 +196,23 @@ class SettingsViewController: UIViewController {
 //                    "themeCategory": "Uyku"
 //                ]
 //            )
-//        ]
-//        
-//        for story in storiesToUpload {
-//            db.collection("stories").addDocument(data: [
-//                "title": story.title,
-//                "description": story.description,
-//                "time": story.time,
-//                "imageURL": story.imageURL,
-//                "ageCategory": story.ageCategory,
-//                "themeCategory": story.themeCategory
-//            ]) { error in
-//                if let error = error {
-//                    print("Hata oluştu: \(error)")
-//                } else {
-//                    print("\(story.title) başarıyla Firebase'e eklendi!")
-//                }
-//            }
-//        }
-//    }
-//}
+        ]
+        
+        for story in storiesToUpload {
+            db.collection("stories").addDocument(data: [
+                "title": story.title,
+                "description": story.description,
+                "time": story.time,
+                "imageURL": story.imageURL,
+                "ageCategory": story.ageCategory,
+                "themeCategory": story.themeCategory
+            ]) { error in
+                if let error = error {
+                    print("Hata oluştu: \(error)")
+                } else {
+                    print("\(story.title) başarıyla Firebase'e eklendi!")
+                }
+            }
+        }
+    }
+}

@@ -20,14 +20,15 @@ class DashboardTabBar: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViewControllers()
-        // Do any additional setup after loading the view.
+        setupTabBarAppearance()
     }
+    
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
     }
     
     private func setupViewControllers(){
@@ -36,10 +37,6 @@ class DashboardTabBar: UITabBarController {
         
         mainNvg = storyBoard.instantiateInitialViewController() as! UINavigationController
         mainTab = mainNvg.topViewController as? HomePageViewController
-        
-        
-        //        let adviceVC = adviceNvg.topViewController as! AdviceViewController
-        
         
         let storyBoardBundle2 = Bundle(for: StoriesViewController.self)
         let storyBoard2: UIStoryboard = UIStoryboard(name: "Stories", bundle: storyBoardBundle2)
@@ -56,17 +53,13 @@ class DashboardTabBar: UITabBarController {
         
         settingsNvg = storyBoard4.instantiateInitialViewController() as! UINavigationController
         
-        
-        
         let mainTabBar = UITabBarItem(title: "Ana Sayfa", image: .homePage.withRenderingMode(.alwaysOriginal), selectedImage: .selectedHomePage.withRenderingMode(.alwaysOriginal))
-        
         mainTabBar.tag = 1
         mainNvg.tabBarItem = mainTabBar
         
         let storiesTabBar = UITabBarItem(title: "Hikayeler", image: .storires.withRenderingMode(.alwaysOriginal), selectedImage: .selectedStories.withRenderingMode(.alwaysOriginal))
         storiesTabBar.tag = 2
         storiesNvg.tabBarItem = storiesTabBar
-        
         
         let favoriteTabBar = UITabBarItem(title: "Favoriler", image: .favorites.withRenderingMode(.alwaysOriginal), selectedImage: .selectedFavorites.withRenderingMode(.alwaysOriginal))
         favoriteTabBar.tag = 3
@@ -76,41 +69,61 @@ class DashboardTabBar: UITabBarController {
         settingsTabBar.tag = 4
         settingsNvg.tabBarItem = settingsTabBar
         
+        self.viewControllers = [mainNvg, storiesNvg, favoriteNvg, settingsNvg]
+    }
+    
+    private func setupTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
         
-        self.viewControllers = [mainNvg,storiesNvg,favoriteNvg,settingsNvg]
+        // Arka plan rengi (koyu lacivert)
+//        appearance.backgroundColor = UIColor(red: 0.09, green: 0.10, blue: 0.15, alpha: 1.0)
+        
+        // Seçili item rengi (beyaz)
+        appearance.stackedLayoutAppearance.selected.iconColor = .white
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 11, weight: .medium)
+        ]
+        
+        // Seçilmemiş item rengi (gri)
+        appearance.stackedLayoutAppearance.normal.iconColor = UIColor.gray
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .foregroundColor: UIColor.gray,
+            .font: UIFont.systemFont(ofSize: 11, weight: .regular)
+        ]
+        
+        // Ayırıcı çizgiyi kaldır
+        appearance.shadowColor = .clear
+        
+        tabBar.standardAppearance = appearance
+        if #available(iOS 15.0, *) {
+            tabBar.scrollEdgeAppearance = appearance
+        }
+        // Tab bar yüksekliğini artır (isteğe bağlı)
+        // var frame = tabBar.frame
+        // frame.size.height = 80
+        // tabBar.frame = frame
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        print("tab bar viewDidAppear#####3")
+        super.viewDidAppear(animated)
     }
     
+    // tabBar(_:didSelect:) metodunu tamamen kaldırın veya
+    // sadece root'a dönmek istiyorsanız popToRootViewController kullanın:
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         switch item.tag {
         case 1:
-            mainNvg.popViewController(animated: false)
-            if let tabBar = self.tabBarController {
-                tabBar.selectedIndex = 0
-            }
+            mainNvg.popToRootViewController(animated: false)
         case 2:
-            storiesNvg.popViewController(animated: false)
+            storiesNvg.popToRootViewController(animated: false)
         case 3:
-            favoriteNvg.popViewController(animated: false)
+            favoriteNvg.popToRootViewController(animated: false)
         case 4:
-            settingsNvg.popViewController(animated: false)
-            default :
+            settingsNvg.popToRootViewController(animated: false)
+        default:
             print("Dont Know The Tab")
         }
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

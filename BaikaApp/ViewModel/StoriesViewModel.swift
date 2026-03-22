@@ -24,15 +24,16 @@ class StoriesViewModel {
     
     // Filtre verileri
     let ageFilters: [FilterCategory] = [
-        FilterCategory(title: "0-2 Yas", iconName: "baby_icon", id: "0-2 Yas"),
-        FilterCategory(title: "3-4 Yas", iconName: "kid_icon", id: "3-4 Yas"),
-        FilterCategory(title: "5-6 Yas", iconName: "child_icon", id: "5-6 Yas")
+        FilterCategory(title: "0-2 Yaş", iconName: "baby_icon", id: "0-2 Yaş"),
+        FilterCategory(title: "3-4 Yaş", iconName: "kid_icon", id: "3-4 Yaş"),
+        FilterCategory(title: "5-6 Yaş", iconName: "child_icon", id: "5-6 Yaş")
     ]
     
     let themeFilters: [FilterCategory] = [
-        FilterCategory(title: "Arkadaslik", iconName: "heart_icon", id: "Arkadaslik"),
+        FilterCategory(title: "Arkadaşlık", iconName: "heart_icon", id: "Arkadaşlık"),
         FilterCategory(title: "Uyku", iconName: "moon_icon", id: "Uyku"),
-        FilterCategory(title: "Macera", iconName: "map_icon", id: "Macera")
+        FilterCategory(title: "Macera", iconName: "map_icon", id: "Macera"),
+        FilterCategory(title: "İyilik", iconName: "sleep_icon", id: "İyilik")
     ]
     
     // View'ı bilgilendirmek için closure'lar

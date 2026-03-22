@@ -23,40 +23,40 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UPb-st-T89">
-                        <rect key="frame" x="16" y="0.0" width="302" height="200"/>
+                        <rect key="frame" x="16" y="0.0" width="302" height="211"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="q" translatesAutoresizingMaskIntoConstraints="NO" id="2kk-Yp-l92">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="q" translatesAutoresizingMaskIntoConstraints="NO" id="2kk-Yp-l92">
                                 <rect key="frame" x="0.0" y="0.0" width="302" height="144"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="144" id="bT7-Bg-WjB"/>
+                                    <constraint firstAttribute="height" priority="999" constant="144" id="bT7-Bg-WjB"/>
                                 </constraints>
                             </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="FIv-Lo-7sm">
-                                <rect key="frame" x="16" y="152" width="270" height="32"/>
+                                <rect key="frame" x="16" y="152" width="270" height="43"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Küçük Ayı ve Yıldızlar" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IYr-W3-GoL">
-                                        <rect key="frame" x="0.0" y="0.0" width="270" height="12"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="270" height="17.666666666666668"/>
                                         <fontDescription key="fontDescription" name="Nunito-Medium" family="Nunito" pointSize="16"/>
                                         <color key="textColor" white="1" alpha="0.93279599469999996" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="uNB-1i-Wrm">
-                                        <rect key="frame" x="0.0" y="20" width="270" height="12"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="uNB-1i-Wrm">
+                                        <rect key="frame" x="0.0" y="25.666666666666657" width="270" height="17.333333333333329"/>
                                         <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="8hn-bC-gvw">
-                                                <rect key="frame" x="0.0" y="0.0" width="37.333333333333336" height="12"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="8hn-bC-gvw">
+                                                <rect key="frame" x="0.0" y="0.0" width="54.666666666666664" height="17.333333333333332"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YFJ-jc-Wbb">
-                                                        <rect key="frame" x="0.0" y="0.66666666666666607" width="12" height="10.666666666666668"/>
+                                                        <rect key="frame" x="0.0" y="0.66666666666666607" width="12" height="15.999999999999998"/>
                                                         <color key="tintColor" white="1" alpha="0.4006932218" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="12" id="4uN-Cr-CBb"/>
-                                                            <constraint firstAttribute="height" constant="12" id="kff-T7-Jy9"/>
+                                                            <constraint firstAttribute="width" priority="999" constant="12" id="4uN-Cr-CBb"/>
+                                                            <constraint firstAttribute="height" priority="999" constant="12" id="kff-T7-Jy9"/>
                                                         </constraints>
                                                         <imageReference key="image" image="clock" catalog="system" symbolScale="default"/>
                                                     </imageView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Orta" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IzS-a6-np1">
-                                                        <rect key="frame" x="15.999999999999998" y="0.0" width="21.333333333333329" height="12"/>
+                                                        <rect key="frame" x="15.999999999999996" y="0.0" width="38.666666666666657" height="17.333333333333332"/>
                                                         <fontDescription key="fontDescription" name="Nunito-Medium" family="Nunito" pointSize="13"/>
                                                         <color key="textColor" white="1" alpha="0.40069322183098594" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <nil key="highlightedColor"/>
@@ -65,23 +65,17 @@
                                                 </subviews>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="C18-I4-UfG">
-                                                <rect key="frame" x="45.333333333333329" y="0.0" width="224.66666666666669" height="12"/>
+                                                <rect key="frame" x="62.666666666666671" y="0.0" width="207.33333333333331" height="17.333333333333332"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="zero_two" translatesAutoresizingMaskIntoConstraints="NO" id="tNn-wV-gpE">
-                                                        <rect key="frame" x="0.0" y="0.0" width="12" height="12"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="15.333333333333334" height="17.333333333333332"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="12" id="KzD-E0-oiG"/>
-                                                            <constraint firstAttribute="height" constant="12" id="QNU-Ew-J7h"/>
+                                                            <constraint firstAttribute="width" priority="999" constant="12" id="KzD-E0-oiG"/>
+                                                            <constraint firstAttribute="height" priority="999" constant="12" id="QNU-Ew-J7h"/>
                                                         </constraints>
                                                     </imageView>
-                                                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="🎢" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="none" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fr5-Jb-sVF">
-                                                        <rect key="frame" x="14" y="0.0" width="0.0" height="12"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                                        <color key="textColor" white="1" alpha="0.4006932218" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <nil key="highlightedColor"/>
-                                                    </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Macera" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="none" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1sz-hk-7Pp">
-                                                        <rect key="frame" x="16" y="0.0" width="208.66666666666666" height="12"/>
+                                                        <rect key="frame" x="19.333333333333329" y="0.0" width="188" height="17.333333333333332"/>
                                                         <fontDescription key="fontDescription" name="Nunito-Medium" family="Nunito" pointSize="13"/>
                                                         <color key="textColor" white="1" alpha="0.40069322183098594" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <nil key="highlightedColor"/>
@@ -140,7 +134,7 @@
                 <outlet property="ageView" destination="9yY-iG-Bv0" id="hc1-Gx-Nvq"/>
                 <outlet property="innerView" destination="UPb-st-T89" id="iF7-JI-FVW"/>
             </connections>
-            <point key="canvasLocation" x="138.93129770992365" y="155.63380281690141"/>
+            <point key="canvasLocation" x="138.93129770992365" y="155.28169014084509"/>
         </tableViewCell>
     </objects>
     <resources>

@@ -11,6 +11,7 @@ extension UIImageView {
     /// - Parameter url: Görselin URL adresi (String)
     func loadImage(from url: String) {
         
+        IndicatorView.shared.showIndicator()
         guard let imageURL = URL(string: url) else {
             print("Geçersiz URL") // URL hatalıysa konsola hata yazdır
             return
@@ -29,5 +30,11 @@ extension UIImageView {
                 }
             }
         }.resume() // İstek başlatılır
+        IndicatorView.shared.removeIndicator()
     }
+    
+    func setThemeEmoji(_ theme: String) {
+        self.image = EmojiImageHelper.emojiImage(for: theme, size: bounds.size)
+    }
+    
 }

@@ -73,12 +73,6 @@ class StoriesViewController: UIViewController {
                                 
     }
      
-             
-
-                
-    
-    
-    
     func updateEmptyState() {
         tableView.isHidden = viewModel.isEmpty
         emptyStateView.isHidden = !viewModel.isEmpty
@@ -168,6 +162,16 @@ extension StoriesViewController: UITableViewDelegate, UITableViewDataSource {
         }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        showCustomAlert(message: viewModel.story(at: indexPath.row).description)
+        let selectedStory = viewModel.story(at: indexPath.row)
+        
+        let storyboard = UIStoryboard(name: "StoryDetails", bundle: nil)
+        
+        let detailVC = storyboard.instantiateViewController(identifier: "StoryDetail") { coder in
+
+            return StoryDetailsViewController(coder: coder, story: selectedStory)
+        }
+//        detailVC.hidesBottomBarWhenPushed = false
+        self.navigationController?.pushViewController(detailVC, animated: true)
+        
     }
 }
