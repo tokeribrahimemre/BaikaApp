@@ -48,7 +48,7 @@ class StoriesTableViewCell: UITableViewCell {
         storyImageView.loadImage(from: story.imageURL)
         titleLabel.text = story.title
         timeLabel.text = story.time
-        emojiImageView.setThemeEmoji(story.themeCategory)
+        emojiImageView.setThemeEmoji(story.themeCategory, size: CGSize(width: 12, height: 12))
         themeLabel.text = story.themeCategory
     }
 }

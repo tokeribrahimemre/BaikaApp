@@ -103,7 +103,7 @@ extension UIImageView {
         task.resume()
     }
     
-    func setThemeEmoji(_ theme: String) {
-        self.image = EmojiImageHelper.emojiImage(for: theme, size: bounds.size)
+    func setThemeEmoji(_ theme: String, size: CGSize = CGSize(width: 40, height: 40)) {
+            self.image = EmojiImageHelper.emojiImage(for: theme, size: size)
     }
 }
