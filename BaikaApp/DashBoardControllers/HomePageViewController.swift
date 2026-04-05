@@ -143,7 +143,10 @@ class HomePageViewController: UIViewController {
     
     @IBAction func createNewStoryTapped(_ sender: Any) {
         print("Create New Story tapped")
-        tabBarController?.selectedIndex = 2
+        let storyboard = UIStoryboard(name: "CreateAIStory", bundle: nil)
+        let createStoryVC = storyboard.instantiateViewController(withIdentifier: "CreateAIStoryVC") as! CreateAIStoryViewController
+        createStoryVC.modalPresentationStyle = .fullScreen
+        present(createStoryVC, animated: true)
     }
     
     @IBAction func voiceStoryTapped(_ sender: Any) {
