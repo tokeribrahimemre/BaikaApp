@@ -6,14 +6,15 @@
 //
 
 import Foundation
+import FirebaseFirestore
 
 struct Deneme : Decodable {
     let name: String
     let price: Double
     
 }
-struct Story {
-     let id: String
+struct Story: Identifiable, Codable {
+    @DocumentID var id: String?
      let time: String
      let title: String
      let description: String
@@ -39,3 +40,5 @@ struct FilterCategory {
     let iconName: String
     let id: String
 }
+
+

@@ -9,6 +9,21 @@ import UIKit
 
 final class EmojiImageHelper {
     
+    // Karakter → Emoji eşleştirmesi
+    private static let characterEmojiMap: [String: String] = [
+        "ayı": "🐻",
+        "tavşan": "🐰",
+        "kedi": "🐱",
+        "köpek": "🐶",
+        "tilki": "🦊",
+        "balık": "🐟",
+    ]
+
+    // MARK: - Karaktere göre emoji string döndür
+    static func characterEmoji(for character: String) -> String {
+        return characterEmojiMap[character.lowercased()] ?? "🐻"
+    }
+
     // Tema → Emoji eşleştirmesi
     private static let themeEmojiMap: [String: String] = [
         "macera": "⚔️",

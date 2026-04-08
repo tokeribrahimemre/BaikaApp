@@ -41,7 +41,7 @@
                                                             <constraint firstAttribute="width" constant="40" id="Trm-rG-Gvm"/>
                                                         </constraints>
                                                         <state key="normal" title="Button"/>
-                                                        <buttonConfiguration key="configuration" style="plain" image="backButton"/>
+                                                        <buttonConfiguration key="configuration" style="plain" image="book.fill"/>
                                                         <connections>
                                                             <action selector="backButtonTapped:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="T2x-nT-UX8"/>
                                                         </connections>

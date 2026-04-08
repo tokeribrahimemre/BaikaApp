@@ -22,16 +22,17 @@ class StoriesViewController: UIViewController {
         
     override func viewDidLoad() {
         super.viewDidLoad()
-        if !shouldShowBackButton {
-            backButton.isUserInteractionEnabled = false
-            backButton.setImage(.moon, for: .normal)
-        }
+        
+        // Dekoratif ikon - geri butonu değil
+        backButton.isUserInteractionEnabled = false
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)
+        backButton.setImage(UIImage(systemName: "book.fill", withConfiguration: config), for: .normal)
+        backButton.tintColor = UIColor(red: 120/255, green: 80/255, blue: 220/255, alpha: 1.0)
+        backButton.configuration = nil
+        
         self.title = "Hikayeler"
         registerCells()
         bindViewModel()
-        
-        
-        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {

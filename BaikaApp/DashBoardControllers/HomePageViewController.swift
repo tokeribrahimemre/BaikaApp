@@ -143,16 +143,17 @@ class HomePageViewController: UIViewController {
     
     @IBAction func createNewStoryTapped(_ sender: Any) {
         print("Create New Story tapped")
+        
         let storyboard = UIStoryboard(name: "CreateAIStory", bundle: nil)
-        let createStoryVC = storyboard.instantiateViewController(withIdentifier: "CreateAIStoryVC") as! CreateAIStoryViewController
-        createStoryVC.modalPresentationStyle = .fullScreen
-        present(createStoryVC, animated: true)
+        if let createVC = storyboard.instantiateViewController(withIdentifier: "CreateAIStoryVC") as? CreateAIStoryViewController {
+            navigationController?.pushViewController(createVC, animated: true)
+        }
     }
     
     @IBAction func voiceStoryTapped(_ sender: Any) {
-        print("Voice Story tapped")
-        tabBarController?.selectedIndex = 1
-        
+        let playlistVC = PlaylistViewController()
+        playlistVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(playlistVC, animated: true)
     }
     
     

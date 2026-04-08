@@ -100,6 +100,28 @@ class StoryDetailsViewController: UIViewController {
 
         let playGesture = UITapGestureRecognizer(target: self, action: #selector(listenButtonTapped))
         playStackView.addGestureRecognizer(playGesture)
+        
+        let favoriteGesture = UITapGestureRecognizer(target: self, action: #selector(favoriteButtonTapped(_:)))
+            favoriteStackView.addGestureRecognizer(favoriteGesture)
+
+            updateFavoriteButton()
+        
+    }
+    
+    private func updateFavoriteButton() {
+        let isFav = FavoriteManager.shared.isFavorite(viewModel.storyID)
+        heartImage.image = UIImage(systemName: isFav ? "heart.fill" : "heart")
+        heartImage.tintColor = isFav ? .systemRed : .white
+        heartLabel.text = isFav ? "Favorilerde" : "Favorile"
+    }
+
+    @objc private func favoriteButtonTapped(_ sender: Any) {
+        FavoriteManager.shared.toggleFavorite(viewModel.storyID)
+        updateFavoriteButton()
+
+        // Haptic feedback
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
     }
 
     // MARK: - UI Updates
@@ -107,6 +129,7 @@ class StoryDetailsViewController: UIViewController {
     private func updatePlayButton(for state: SpeechState) {
         switch state {
         case .idle:
+            IndicatorView.shared.removeIndicator()
             playImage.image = UIImage(systemName: "play.fill")
             playLabel.text = "Dinle"
         case .loading:
@@ -153,9 +176,5 @@ class StoryDetailsViewController: UIViewController {
 
     @objc private func listenButtonTapped() {
         viewModel.togglePlayback()
-    }
-
-    @objc private func favoriteButtonTapped(_ sender: Any) {
-        // TODO: Favorilere ekleme ViewModel üzerinden
     }
 }

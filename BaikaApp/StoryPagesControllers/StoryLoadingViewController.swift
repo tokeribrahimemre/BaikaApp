@@ -19,6 +19,7 @@ struct GeneratedStory {
     let content: String
     let childName: String
     let character: String
+    let characterEmoji: String
     let place: String
     let theme: String
     let ageGroup: String
@@ -178,16 +179,32 @@ class StoryLoadingViewController: UIViewController {
         Task {
             do {
                 let text = try await service.generateStory(parameters: storyParameters)
+                // Dinamik başlık: "Ev ve Ayıcık'ın Masalı" veya fallback
+                let dynamicTitle: String
+                let name = self.storyParameters.childName.trimmingCharacters(in: .whitespacesAndNewlines)
+                let character = self.storyParameters.character.trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                if !name.isEmpty && !character.isEmpty {
+                    dynamicTitle = "\(name) ve \(character)'ın Masalı"
+                } else if !name.isEmpty {
+                    dynamicTitle = "\(name)'ın Masalı"
+                } else if !character.isEmpty {
+                    dynamicTitle = "\(character)'ın Masalı"
+                } else {
+                    dynamicTitle = "Yapay Zeka Masalı"
+                }
+
                 let generated = GeneratedStory(
-                    title: "Yapay Zeka Masalı",
-                    subtitle: "\(storyParameters.childName) için özel",
+                    title: dynamicTitle,
+                    subtitle: "\(self.storyParameters.ageGroup) yaş grubu",
                     emojis: extractEmojis(from: text),
                     content: text,
-                    childName: storyParameters.childName,
-                    character: storyParameters.character,
-                    place: storyParameters.place,
-                    theme: storyParameters.theme,
-                    ageGroup: storyParameters.ageGroup
+                    childName: self.storyParameters.childName,
+                    character: self.storyParameters.character,
+                    characterEmoji: EmojiImageHelper.characterEmoji(for: self.storyParameters.character),
+                    place: self.storyParameters.place,
+                    theme: self.storyParameters.theme,
+                    ageGroup: self.storyParameters.ageGroup
                 )
 
                 await MainActor.run {

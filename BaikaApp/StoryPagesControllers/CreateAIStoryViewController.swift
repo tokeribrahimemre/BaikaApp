@@ -102,6 +102,7 @@ class CreateAIStoryViewController: UIViewController {
     private var currentStep = 0
     private var childName: String = ""
     private var nextButtonBottomConstraint: NSLayoutConstraint!
+    private let nextButtonGradient = CAGradientLayer()
 
     private var steps: [Step] = [
         Step(title: "Çocuğun Adı", subtitle: "Hikayedeki çocuğun adını girin", type: .textInput, options: []),
@@ -264,27 +265,32 @@ class CreateAIStoryViewController: UIViewController {
     }
 
     private func updateNextButtonGradient() {
-        nextButton.layer.sublayers?.filter { $0 is CAGradientLayer }.forEach { $0.removeFromSuperlayer() }
+        // Gradient layer'ı sadece bir kez ekle
+        if nextButtonGradient.superlayer == nil {
+            nextButtonGradient.startPoint = CGPoint(x: 0, y: 0.5)
+            nextButtonGradient.endPoint = CGPoint(x: 1, y: 0.5)
+            nextButtonGradient.cornerRadius = 25
+            nextButton.layer.insertSublayer(nextButtonGradient, at: 0)
+        }
 
-        let gradientLayer = CAGradientLayer()
-
+        // Sadece renkleri ve frame'i güncelle
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        
         if isCurrentStepValid {
-            gradientLayer.colors = [
+            nextButtonGradient.colors = [
                 UIColor(red: 100/255, green: 60/255, blue: 200/255, alpha: 1.0).cgColor,
                 UIColor(red: 150/255, green: 80/255, blue: 220/255, alpha: 1.0).cgColor
             ]
         } else {
-            gradientLayer.colors = [
+            nextButtonGradient.colors = [
                 UIColor.white.withAlphaComponent(0.08).cgColor,
                 UIColor.white.withAlphaComponent(0.08).cgColor
             ]
         }
 
-        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
-        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
-        gradientLayer.frame = nextButton.bounds
-        gradientLayer.cornerRadius = 25
-        nextButton.layer.insertSublayer(gradientLayer, at: 0)
+        nextButtonGradient.frame = nextButton.bounds
+        CATransaction.commit()
     }
 
     // MARK: - Actions

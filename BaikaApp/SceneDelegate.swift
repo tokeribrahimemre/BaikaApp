@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -13,22 +14,30 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        // Uygulama penceresini oluşturuyoruz
-            let window = UIWindow(windowScene: windowScene)
-            
-            // TabBar'ımızı oluşturuyoruz
-            let tab = DashboardTabBar()
-            
-            // TabBar'ı uygulamanın ana ekranı (Root View Controller) yapıyoruz
-            window.rootViewController = tab
-            
-            self.window = window
-            window.makeKeyAndVisible()
+        let window = UIWindow(windowScene: windowScene)
         
+        // Firebase Auth durumuna göre başlangıç ekranını belirle
+        if Auth.auth().currentUser != nil {
+            // Kullanıcı zaten giriş yapmış → Ana uygulamayı göster
+            window.rootViewController = DashboardTabBar()
+        } else {
+            // Kullanıcı giriş yapmamış → Login ekranını göster
+            let loginVC = LoginViewController()
+            window.rootViewController = loginVC
+        }
+        
+        self.window = window
+        window.makeKeyAndVisible()
+    }
+    
+    
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        FavoriteManager.shared.flushIfNeeded()
+    }
+
+    func sceneWillEnterForeground(_ scene: UIScene) {
+        FavoriteManager.shared.fetchFavoritesIfNeeded()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -48,16 +57,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This may occur due to temporary interruptions (ex. an incoming phone call).
     }
 
-    func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
-    }
-
-    func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
-    }
+    
 
 
 }

@@ -26,6 +26,9 @@ class StoryDetailsViewModel {
 
     let story: Story
     private let speechService: SpeechService
+    var storyID: String {
+        story.id ?? ""
+    }
 
     // MARK: - Bindings
 
@@ -59,6 +62,10 @@ class StoryDetailsViewModel {
     func togglePlayback() {
         switch speechState {
         case .idle:
+            // Ses ayarı kapalıysa hiç başlatma
+            let isSoundEnabled = UserDefaults.standard.object(forKey: "isSoundEnabled") as? Bool ?? true
+            guard isSoundEnabled else { return }
+            
             speechState = .loading
             speechService.startSpeaking(text: story.description)
         case .playing:

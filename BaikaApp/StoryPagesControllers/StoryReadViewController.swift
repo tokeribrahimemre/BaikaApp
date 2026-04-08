@@ -1,13 +1,16 @@
-//
-//  StoryReadViewController.swift
-//  BaikaApp
-//
-
 import UIKit
+import AVFoundation
+import FirebaseFirestore
+import FirebaseAuth
 
 class StoryReadViewController: UIViewController {
 
     var story: GeneratedStory!
+    private let speechService = SpeechService()
+    private var isSpeaking = false
+    private var isSaved = false
+    private var displayedContent: String = ""
+    private var contentOffset: Int = 0  // story.content içinde displayedContent'in başlangıç index'i
 
     // MARK: - UI Elements
 
@@ -116,6 +119,12 @@ class StoryReadViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         configureContent()
+        checkIfAlreadySaved()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        speechService.stop()
     }
 
     // MARK: - Setup
@@ -124,13 +133,11 @@ class StoryReadViewController: UIViewController {
         view.backgroundColor = UIColor(red: 15/255, green: 15/255, blue: 35/255, alpha: 1.0)
         navigationController?.setNavigationBarHidden(true, animated: false)
 
-        // Header
         view.addSubview(backButton)
         view.addSubview(headerTitleLabel)
         view.addSubview(headerSubtitleLabel)
         view.addSubview(sparkleButton)
 
-        // ScrollView
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
 
@@ -178,24 +185,20 @@ class StoryReadViewController: UIViewController {
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Back button
             backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
             backButton.widthAnchor.constraint(equalToConstant: 36),
             backButton.heightAnchor.constraint(equalToConstant: 36),
 
-            // Header title
             headerTitleLabel.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: 8),
             headerTitleLabel.topAnchor.constraint(equalTo: backButton.topAnchor, constant: -2),
 
             headerSubtitleLabel.leadingAnchor.constraint(equalTo: headerTitleLabel.leadingAnchor),
             headerSubtitleLabel.topAnchor.constraint(equalTo: headerTitleLabel.bottomAnchor, constant: 2),
 
-            // Sparkle
             sparkleButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             sparkleButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
 
-            // ScrollView
             scrollView.topAnchor.constraint(equalTo: headerSubtitleLabel.bottomAnchor, constant: 16),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -207,7 +210,6 @@ class StoryReadViewController: UIViewController {
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
 
-            // Story Title Card
             storyTitleCard.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             storyTitleCard.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             storyTitleCard.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
@@ -220,12 +222,10 @@ class StoryReadViewController: UIViewController {
             emojisLabel.leadingAnchor.constraint(equalTo: storyTitleCard.leadingAnchor, constant: 16),
             emojisLabel.bottomAnchor.constraint(equalTo: storyTitleCard.bottomAnchor, constant: -16),
 
-            // Story Content
             storyContentLabel.topAnchor.constraint(equalTo: storyTitleCard.bottomAnchor, constant: 20),
             storyContentLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             storyContentLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
 
-            // Buttons
             listenButton.topAnchor.constraint(equalTo: storyContentLabel.bottomAnchor, constant: 28),
             listenButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             listenButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
@@ -250,15 +250,24 @@ class StoryReadViewController: UIViewController {
         headerTitleLabel.text = story.title
         headerSubtitleLabel.text = story.subtitle
 
-        // İlk satırı başlık olarak ayır
         let lines = story.content.components(separatedBy: "\n").filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
 
         if let firstLine = lines.first {
             storyTitleLabel.text = firstLine
             let remainingContent = lines.dropFirst().joined(separator: "\n\n")
-            storyContentLabel.text = remainingContent
+            displayedContent = remainingContent
+            
+            // story.content içinde remainingContent'in başladığı yeri bul
+            if let range = story.content.range(of: firstLine) {
+                contentOffset = story.content.distance(from: story.content.startIndex, to: range.upperBound)
+                // Boşluk/newline'ları atla
+                var idx = story.content.index(story.content.startIndex, offsetBy: contentOffset)
+                while idx < story.content.endIndex && (story.content[idx] == "\n" || story.content[idx] == " ") {
+                    idx = story.content.index(after: idx)
+                }
+                contentOffset = story.content.distance(from: story.content.startIndex, to: idx)
+            }
 
-            // Satır aralığı
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineSpacing = 6
             let attributed = NSAttributedString(
@@ -272,31 +281,152 @@ class StoryReadViewController: UIViewController {
             storyContentLabel.attributedText = attributed
         } else {
             storyTitleLabel.text = story.title
+            displayedContent = story.content
+            contentOffset = 0
             storyContentLabel.text = story.content
         }
 
         emojisLabel.text = story.emojis
     }
 
+    /// Hikaye daha önce kaydedilmiş mi kontrol et
+    private func checkIfAlreadySaved() {
+        let alreadyExists = CreatedStoriesManager.shared.cachedStories.contains {
+            $0.title == story.title && $0.content == story.content
+        }
+        if alreadyExists {
+            isSaved = true
+            saveButton.isEnabled = false
+            configureActionButton(
+                saveButton,
+                title: "  Kaydedildi ✓",
+                icon: "checkmark.circle.fill",
+                bgColor: UIColor.systemGreen.withAlphaComponent(0.15),
+                borderColor: UIColor.systemGreen.withAlphaComponent(0.4),
+                titleColor: UIColor.systemGreen
+            )
+        }
+    }
+
     // MARK: - Actions
 
     @objc private func backTapped() {
-        navigationController?.popToRootViewController(animated: true)
+        speechService.stop()
+        // Modal olarak açıldıysa: en alttaki presenter'a kadar tüm modal'ları kapat
+        if let nav = navigationController {
+            nav.popToRootViewController(animated: true)
+        } else if let rootPresenter = self.presentingViewController?.presentingViewController {
+            // CreateAIStoryVC → StoryLoadingVC → StoryReadVC zincirinde en alta dön
+            rootPresenter.dismiss(animated: true)
+        } else {
+            dismiss(animated: true)
+        }
     }
 
     @objc private func listenTapped() {
-        // TODO: Text-to-speech
-        print("Dinle tapped")
+        if speechService.isSpeaking || speechService.isPaused {
+            speechService.stop()
+            isSpeaking = false
+            updateListenButton(speaking: false)
+            resetHighlight()
+            return
+        }
+
+        // Ses ayarı kapalıysa hiç başlatma
+        let isSoundEnabled = UserDefaults.standard.object(forKey: "isSoundEnabled") as? Bool ?? true
+        guard isSoundEnabled else { return }
+
+        isSpeaking = true
+        updateListenButton(speaking: true)
+        speechService.delegate = self
+        speechService.startSpeaking(text: story.content)
+    }
+
+    private func updateListenButton(speaking: Bool) {
+        let title = speaking ? "  Durdur" : "  Dinle"
+        let icon = speaking ? "stop.circle" : "headphones"
+        configureActionButton(
+            listenButton,
+            title: title,
+            icon: icon,
+            bgColor: purpleColor.withAlphaComponent(0.15),
+            borderColor: purpleColor.withAlphaComponent(0.4),
+            titleColor: purpleColor
+        )
     }
 
     @objc private func saveTapped() {
-        // TODO: Hikayeyi kaydet
-        print("Kaydet tapped")
+        // Zaten kaydedilmişse tekrar kaydetme
+        guard !isSaved else { return }
+        
+        // Auth kontrolü - kullanıcı giriş yapmamışsa uyar
+        guard Auth.auth().currentUser != nil else {
+            let alert = UIAlertController(title: "Hata", message: "Kaydetmek için giriş yapmanız gerekiyor.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+            present(alert, animated: true)
+            return
+        }
+        
+        saveButton.isEnabled = false
+        configureActionButton(saveButton, title: "  Kaydediliyor...", icon: "hourglass", bgColor: purpleColor.withAlphaComponent(0.15), borderColor: purpleColor.withAlphaComponent(0.4), titleColor: purpleColor)
+
+        let createdStory = CreatedStory(
+            title: story.title,
+            content: story.content,
+            ageCategory: story.ageGroup,
+            imageURL: story.characterEmoji,
+            createdAt: Date()
+        )
+
+        CreatedStoriesManager.shared.saveCreatedStory(createdStory) { [weak self] success in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                if success {
+                    self.isSaved = true
+                    self.configureActionButton(
+                        self.saveButton,
+                        title: "  Kaydedildi ✓",
+                        icon: "checkmark.circle.fill",
+                        bgColor: UIColor.systemGreen.withAlphaComponent(0.15),
+                        borderColor: UIColor.systemGreen.withAlphaComponent(0.4),
+                        titleColor: UIColor.systemGreen
+                    )
+                } else {
+                    self.saveButton.isEnabled = true
+                    self.configureActionButton(
+                        self.saveButton,
+                        title: "  Kaydet",
+                        icon: "square.and.arrow.down",
+                        bgColor: self.purpleColor.withAlphaComponent(0.15),
+                        borderColor: self.purpleColor.withAlphaComponent(0.4),
+                        titleColor: self.purpleColor
+                    )
+                    let alert = UIAlertController(title: "Hata", message: "Hikaye kaydedilemedi. Lütfen tekrar deneyin.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+                    self.present(alert, animated: true)
+                }
+            }
+        }
     }
 
     @objc private func regenerateTapped() {
-        // Yükleme ekranına geri dön ve yeniden oluştur
-        let loadingVC = StoryLoadingViewController()
+        // Parametreler boşsa yeniden oluşturulamaz (favorilerden gelmiş olabilir)
+        guard !story.childName.isEmpty else {
+            let alert = UIAlertController(
+                title: "Yeniden Oluşturulamıyor",
+                message: "Bu hikaye kayıtlı parametrelere sahip değil. Lütfen ana sayfadan yeni bir hikaye oluşturun.",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+            present(alert, animated: true)
+            return
+        }
+
+        speechService.stop()
+
+        // Yeni loading VC hazırla
+        let storyboard = UIStoryboard(name: "StoryLoading", bundle: nil)
+        let loadingVC = storyboard.instantiateViewController(withIdentifier: "StoryLoadingVC") as! StoryLoadingViewController
         loadingVC.storyParameters = StoryParameters(
             childName: story.childName,
             character: story.character,
@@ -304,9 +434,130 @@ class StoryReadViewController: UIViewController {
             theme: story.theme,
             ageGroup: story.ageGroup
         )
-        navigationController?.setViewControllers(
-            [navigationController!.viewControllers.first!, loadingVC],
-            animated: true
+        loadingVC.modalPresentationStyle = .fullScreen
+
+        // Modal zincir: CreateAIStoryVC → StoryLoadingVC → StoryReadVC (bu VC)
+        // En üstteki presenting VC'yi bul (CreateAIStoryVC veya StoryLoadingVC)
+        // StoryReadVC'yi sunan StoryLoadingVC
+        if let loadingPresenter = self.presentingViewController {
+            // StoryLoadingVC'yi sunan CreateAIStoryVC (veya başka root)
+            if let rootPresenter = loadingPresenter.presentingViewController {
+                // Tüm modal'ları kapat, sonra root'tan yeni loading aç
+                rootPresenter.dismiss(animated: true) {
+                    rootPresenter.present(loadingVC, animated: true)
+                }
+            } else {
+                // Tek modal katman varsa (favorilerden gelmiş olabilir)
+                loadingPresenter.dismiss(animated: true) {
+                    loadingPresenter.present(loadingVC, animated: true)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - SpeechServiceDelegate
+
+extension StoryReadViewController: SpeechServiceDelegate {
+    func speechDidStart() {
+        DispatchQueue.main.async { [weak self] in
+            self?.isSpeaking = true
+            self?.updateListenButton(speaking: true)
+        }
+    }
+
+    func speechDidHighlight(characterRange: NSRange, sentenceRange: NSRange) {
+        DispatchQueue.main.async { [weak self] in
+            self?.highlightWord(characterRange: characterRange, sentenceRange: sentenceRange)
+        }
+    }
+
+    func speechDidFinish() {
+        DispatchQueue.main.async { [weak self] in
+            self?.isSpeaking = false
+            self?.updateListenButton(speaking: false)
+            self?.resetHighlight()
+        }
+    }
+}
+
+// MARK: - Highlight
+
+extension StoryReadViewController {
+
+    /// Okunan kelimeyi ve cümleyi storyContentLabel üzerinde renklendirir
+    private func highlightWord(characterRange: NSRange, sentenceRange: NSRange) {
+        let labelText = displayedContent
+        guard !labelText.isEmpty else { return }
+        let labelLength = (labelText as NSString).length
+
+        // speech range'lerini label text range'lerine dönüştür (offset çıkar)
+        let wordLoc = characterRange.location - contentOffset
+        let wordLen = characterRange.length
+        let sentLoc = sentenceRange.location - contentOffset
+        let sentLen = sentenceRange.length
+
+        // Varsayılan stil
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 6
+        let defaultFont = UIFont(name: "Nunito-Regular", size: 16) ?? .systemFont(ofSize: 16)
+
+        let defaultAttrs: [NSAttributedString.Key: Any] = [
+            .font: defaultFont,
+            .foregroundColor: UIColor.white.withAlphaComponent(0.4),
+            .paragraphStyle: paragraphStyle
+        ]
+
+        let attributed = NSMutableAttributedString(string: labelText, attributes: defaultAttrs)
+
+        // Okunan cümleyi aydınlat
+        let safeSentRange = NSRange(
+            location: max(0, sentLoc),
+            length: min(sentLen, labelLength - max(0, sentLoc))
         )
+        if safeSentRange.location >= 0 && safeSentRange.length > 0 && safeSentRange.location + safeSentRange.length <= labelLength {
+            attributed.addAttribute(.foregroundColor, value: UIColor.white.withAlphaComponent(0.85), range: safeSentRange)
+        }
+
+        // Okunan kelimeyi sarı/altın renge boya
+        let safeWordRange = NSRange(
+            location: max(0, wordLoc),
+            length: min(wordLen, labelLength - max(0, wordLoc))
+        )
+        if safeWordRange.location >= 0 && safeWordRange.length > 0 && safeWordRange.location + safeWordRange.length <= labelLength {
+            attributed.addAttributes([
+                .foregroundColor: UIColor(red: 1.0, green: 0.85, blue: 0.35, alpha: 1.0),
+                .font: UIFont(name: "Nunito-Bold", size: 16) ?? .boldSystemFont(ofSize: 16)
+            ], range: safeWordRange)
+        }
+
+        storyContentLabel.attributedText = attributed
+
+        // Okunan kelimeye otomatik scroll
+        if let wordRect = storyContentLabel.boundingRect(forCharacterRange: safeWordRange) {
+            let wordRectInScrollView = scrollView.convert(wordRect, from: storyContentLabel)
+            let visibleRect = CGRect(
+                x: wordRectInScrollView.origin.x,
+                y: wordRectInScrollView.origin.y - 100,
+                width: wordRectInScrollView.width,
+                height: wordRectInScrollView.height + 200
+            )
+            scrollView.scrollRectToVisible(visibleRect, animated: true)
+        }
+    }
+
+    /// Okuma bitince/durdurulunca orijinal stile döndür
+    private func resetHighlight() {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 6
+        let attributed = NSAttributedString(
+            string: displayedContent,
+            attributes: [
+                .font: UIFont(name: "Nunito-Regular", size: 16) ?? .systemFont(ofSize: 16),
+                .foregroundColor: UIColor.white.withAlphaComponent(0.85),
+                .paragraphStyle: paragraphStyle
+            ]
+        )
+        storyContentLabel.attributedText = attributed
     }
 }

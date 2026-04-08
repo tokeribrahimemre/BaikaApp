@@ -19,6 +19,7 @@ class SpeechService: NSObject {
 
     private let synthesizer = AVSpeechSynthesizer()
     private(set) var fullText: String = ""
+    private var currentUtterance: AVSpeechUtterance?  // Aktif utterance referansı
 
     var isSpeaking: Bool { synthesizer.isSpeaking }
     var isPaused: Bool { synthesizer.isPaused }
@@ -29,6 +30,18 @@ class SpeechService: NSObject {
     }
 
     func startSpeaking(text: String) {
+        // Ses ayarı kapalıysa okuma
+        let isSoundEnabled = UserDefaults.standard.object(forKey: "isSoundEnabled") as? Bool ?? true
+        guard isSoundEnabled else {
+            delegate?.speechDidFinish()
+            return
+        }
+        
+        // Önceki okuma varsa sessizce durdur (eski utterance'ın didFinish'i yoksayılacak)
+        if synthesizer.isSpeaking || synthesizer.isPaused {
+            synthesizer.stopSpeaking(at: .immediate)
+        }
+        
         fullText = text
         activateAudioSession()
 
@@ -40,11 +53,12 @@ class SpeechService: NSObject {
         utterance.preUtteranceDelay = 0.0
         utterance.postUtteranceDelay = 0.0
 
+        currentUtterance = utterance  // Yeni utterance'ı kaydet
         synthesizer.speak(utterance)
     }
 
     func pause() {
-        synthesizer.pauseSpeaking(at: .word)
+        synthesizer.pauseSpeaking(at: .immediate)
     }
 
     func resume() {
@@ -52,6 +66,7 @@ class SpeechService: NSObject {
     }
 
     func stop() {
+        currentUtterance = nil  // Artık hiçbir utterance'ın callback'ini istemiyoruz
         if synthesizer.isSpeaking || synthesizer.isPaused {
             synthesizer.stopSpeaking(at: .immediate)
         }
@@ -129,15 +144,21 @@ class SpeechService: NSObject {
 extension SpeechService: AVSpeechSynthesizerDelegate {
 
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
+        guard utterance === currentUtterance else { return }
         delegate?.speechDidStart()
     }
 
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, willSpeakRangeOfSpeechString characterRange: NSRange, utterance: AVSpeechUtterance) {
+        guard utterance === currentUtterance, !synthesizer.isPaused else { return }
         let sentenceRange = findSentenceRange(for: characterRange, in: fullText)
         delegate?.speechDidHighlight(characterRange: characterRange, sentenceRange: sentenceRange)
     }
 
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        // Sadece aktif utterance doğal olarak bittiğinde delegate'i çağır
+        guard utterance === currentUtterance else { return }
+        guard !synthesizer.isPaused else { return }
+        currentUtterance = nil
         delegate?.speechDidFinish()
     }
 }
