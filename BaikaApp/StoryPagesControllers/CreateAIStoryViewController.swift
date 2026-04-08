@@ -330,12 +330,19 @@ class CreateAIStoryViewController: UIViewController {
         let selectedTheme = steps[3].options.first(where: { $0.isSelected })?.title ?? ""
         let selectedAge = steps[4].options.first(where: { $0.isSelected })?.title ?? ""
 
-        print("Hikaye Oluşturuluyor:")
-        print("Çocuk Adı: \(childName)")
-        print("Karakter: \(selectedCharacter)")
-        print("Yer: \(selectedPlace)")
-        print("Tema: \(selectedTheme)")
-        print("Yaş: \(selectedAge)")
+        let params = StoryParameters(
+            childName: childName,
+            character: selectedCharacter,
+            place: selectedPlace,
+            theme: selectedTheme,
+            ageGroup: selectedAge
+        )
+            
+        let storyboard = UIStoryboard(name: "StoryLoading", bundle: nil)
+        let loadingVC = storyboard.instantiateViewController(withIdentifier: "StoryLoadingVC") as! StoryLoadingViewController
+        loadingVC.storyParameters = params
+        loadingVC.modalPresentationStyle = .fullScreen
+        present(loadingVC, animated: true)
     }
 
     // MARK: - Keyboard Handling
