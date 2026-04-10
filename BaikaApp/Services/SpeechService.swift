@@ -234,16 +234,20 @@ class SpeechService: NSObject {
     // MARK: - Private - Text splitting
 
     /// Metni ~200 karakterlik parçalara böler.
-    /// Her zaman kelime sınırında keser — bir kelimeyi ortadan bölmez.
+    /// 200 karaktere ulaşıldığında cümle bitmemişse cümlenin sonuna kadar devam eder.
+    /// Böylece TTS tonalama hataları önlenir.
     /// Dönen tuple: (index, text, fullText içindeki başlangıç offset)
     private func splitIntoChunks(_ text: String) -> [(index: Int, text: String, offset: Int)] {
-        let maxLen = 200
-        let words = text.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
+        let minLen = 200
+        let sentenceEnders: Set<Character> = [".", "!", "?", "…"]
 
         var result: [(index: Int, text: String, offset: Int)] = []
+        let words = text.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
+
         var buffer = ""
         var chunkStartOffset = 0   // Bu chunk'ın fullText içindeki başlangıcı
         var cursor = 0             // fullText içindeki mevcut karakter pozisyonu
+        var reachedMinLen = false   // Buffer minLen'i geçti mi
 
         for word in words {
             // Kelimenin fullText içindeki gerçek konumunu bul
@@ -252,17 +256,24 @@ class SpeechService: NSObject {
             }
 
             let candidate = buffer.isEmpty ? word : buffer + " " + word
-            if candidate.count <= maxLen {
-                buffer = candidate
-            } else {
-                if !buffer.isEmpty {
-                    result.append((index: result.count, text: buffer, offset: chunkStartOffset))
+
+            if candidate.count >= minLen {
+                reachedMinLen = true
+            }
+
+            buffer = candidate
+
+            // minLen'e ulaştıysak ve bu kelime cümle sonu içeriyorsa chunk'ı kapat
+            if reachedMinLen, let lastChar = word.last, sentenceEnders.contains(lastChar) {
+                result.append((index: result.count, text: buffer, offset: chunkStartOffset))
+                buffer = ""
+                chunkStartOffset = cursor
+                // fullText'te cursor'dan sonraki boşlukları atla
+                while chunkStartOffset < text.count {
+                    let idx = text.index(text.startIndex, offsetBy: chunkStartOffset)
+                    if text[idx].isWhitespace { chunkStartOffset += 1 } else { break }
                 }
-                // Yeni chunk başlangıç offset'ini hesapla
-                if let range = text.range(of: word, range: text.index(text.startIndex, offsetBy: max(0, cursor - word.count))..<text.endIndex) {
-                    chunkStartOffset = text.distance(from: text.startIndex, to: range.lowerBound)
-                }
-                buffer = word
+                reachedMinLen = false
             }
         }
         if !buffer.isEmpty {
