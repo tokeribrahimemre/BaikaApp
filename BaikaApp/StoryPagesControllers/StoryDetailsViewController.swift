@@ -134,13 +134,14 @@ class StoryDetailsViewController: UIViewController {
             playLabel.text = "Dinle"
         case .loading:
             IndicatorView.shared.showIndicator()
-            playImage.image = UIImage(systemName: "pause.fill")
+            playImage.image = UIImage(systemName: "stop.fill")
             playLabel.text = "Durdur"
         case .playing:
             IndicatorView.shared.removeIndicator()
             playImage.image = UIImage(systemName: "pause.fill")
             playLabel.text = "Durdur"
         case .paused:
+            IndicatorView.shared.removeIndicator()
             playImage.image = UIImage(systemName: "play.fill")
             playLabel.text = "Dinle"
         }

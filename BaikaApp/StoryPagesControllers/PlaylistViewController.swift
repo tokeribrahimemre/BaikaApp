@@ -11,6 +11,7 @@ struct PlaylistItem {
     let content: String
     let emoji: String          // Kapak emojisi
     let source: PlaylistSource
+    let storyID: String?       // Firestore hikaye ID'si (nil = AI oluşturulan)
 }
 
 enum PlaylistSource {
@@ -229,7 +230,8 @@ class PlaylistViewController: UIViewController {
                 subtitle: "\(story.ageCategory) • \(story.themeCategory)",
                 content: story.description,
                 emoji: EmojiImageHelper.emoji(for: story.themeCategory),
-                source: .firestore
+                source: .firestore,
+                storyID: story.id
             ))
         }
 
@@ -243,7 +245,8 @@ class PlaylistViewController: UIViewController {
                 subtitle: created.ageCategory,
                 content: created.content,
                 emoji: emoji,
-                source: .created
+                source: .created,
+                storyID: nil
             ))
         }
     }

@@ -10,6 +10,8 @@ class PlayerViewController: UIViewController {
     var playlist: [PlaylistItem] = []
     private var currentIndex = 0
     private let speechService = SpeechService()
+    /// Sonraki hikayenin ilk chunk'ını sessizce önceden indir
+    private let prefetchService = SpeechService()
     private var isPlaying = false
     private var isPaused = false
 
@@ -137,6 +139,17 @@ class PlayerViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         speechService.delegate = self
+        prefetchService.prefetchOnly = true  // Asla ses çıkarma — sadece cache'e yaz
+        
+        // Ses yüklenirken IndicatorView göster
+        speechService.onLoadingStateChanged = { isLoading in
+            if isLoading {
+                IndicatorView.shared.showIndicator()
+            } else {
+                IndicatorView.shared.removeIndicator()
+            }
+        }
+        
         loadCurrentTrack()
         startPlaying()
     }
@@ -144,6 +157,8 @@ class PlayerViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         speechService.stop()
+        prefetchService.stop()
+        IndicatorView.shared.removeIndicator()
     }
 
     // MARK: - Setup
@@ -267,7 +282,36 @@ class PlayerViewController: UIViewController {
         isPaused = false
         isPlaying = true
         updatePlayPauseIcon(playing: true)
-        speechService.startSpeaking(text: item.content)
+        
+        // Prefetch'i durdur — speechService başlamadan önce çakışma olmasın
+        prefetchService.stop()
+        
+        // Firestore hikayesi ise storyID ile, değilse normal TTS
+        if let storyID = item.storyID {
+            speechService.startSpeakingForStory(text: item.content, storyID: storyID)
+        } else {
+            speechService.startSpeaking(text: item.content)
+        }
+        
+        // Sonraki hikayeyi arka planda hazırla (kısa gecikme ile — speechService başlasın önce)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self else { return }
+            self.prefetchNextTrack(after: self.currentIndex)
+        }
+    }
+
+    /// Sonraki playlist item'ının chunk'larını sessizce önceden başlatır.
+    private func prefetchNextTrack(after index: Int) {
+        let nextIndex = index + 1
+        guard nextIndex < playlist.count else { return }
+        let next = playlist[nextIndex]
+        // prefetchService yalnızca indirme yapar; delegate bağlı değil → sessiz
+        if let storyID = next.storyID {
+            prefetchService.startSpeakingForStory(text: next.content, storyID: storyID)
+        } else {
+            prefetchService.startSpeaking(text: next.content)
+        }
+        print("🔮 Prefetch başlatıldı: \(next.title)")
     }
 
     // MARK: - Play/Pause Icon
@@ -283,6 +327,8 @@ class PlayerViewController: UIViewController {
 
     @objc private func closeTapped() {
         speechService.stop()
+        prefetchService.stop()
+        IndicatorView.shared.removeIndicator()
         dismiss(animated: true)
     }
 
@@ -308,6 +354,7 @@ class PlayerViewController: UIViewController {
     @objc private func prevTapped() {
         guard currentIndex > 0 else { return }
         speechService.stop()
+        prefetchService.stop()
         currentIndex -= 1
         loadCurrentTrack()
         startPlaying()
@@ -316,6 +363,7 @@ class PlayerViewController: UIViewController {
     @objc private func nextTapped() {
         guard currentIndex < playlist.count - 1 else { return }
         speechService.stop()
+        prefetchService.stop()
         currentIndex += 1
         loadCurrentTrack()
         startPlaying()

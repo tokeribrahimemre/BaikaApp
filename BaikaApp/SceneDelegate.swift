@@ -17,18 +17,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
         
-        // Firebase Auth durumuna göre başlangıç ekranını belirle
-        if Auth.auth().currentUser != nil {
-            // Kullanıcı zaten giriş yapmış → Ana uygulamayı göster
-            window.rootViewController = DashboardTabBar()
-        } else {
-            // Kullanıcı giriş yapmamış → Login ekranını göster
-            let loginVC = LoginViewController()
-            window.rootViewController = loginVC
-        }
-        
+        // 1) Önce animasyonlu launch screen'i göster
+        let launchVC = LaunchScreenViewController()
+        window.rootViewController = launchVC
         self.window = window
         window.makeKeyAndVisible()
+        
+        // 2) Animasyon bitince asıl ekrana geç
+        launchVC.onAnimationFinished = { [weak self] in
+            guard let self else { return }
+            
+            let realRoot: UIViewController
+            if Auth.auth().currentUser != nil {
+                realRoot = DashboardTabBar()
+            } else {
+                realRoot = LoginViewController()
+            }
+            
+            // Yumuşak geçiş
+            self.window?.rootViewController = realRoot
+            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil)
+        }
     }
     
     

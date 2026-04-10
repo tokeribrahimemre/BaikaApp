@@ -280,7 +280,8 @@ class FavoritesViewController: UIViewController {
                 characterEmoji: created.imageURL,
                 place: "",
                 theme: "",
-                ageGroup: created.ageCategory
+                ageGroup: created.ageCategory,
+                audioStoragePath: created.audioStoragePath
             )
             let storyboard = UIStoryboard(name: "StoryRead", bundle: nil)
             if let readVC = storyboard.instantiateViewController(withIdentifier: "StoryReadVC") as? StoryReadViewController {

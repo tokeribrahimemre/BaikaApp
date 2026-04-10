@@ -39,6 +39,7 @@ class SettingsViewController: UIViewController {
 
     private let voiceSwitch = UISwitch()
     private var voiceSubtitleLabel: UILabel?
+    private var voiceSelectionSubtitleLabel: UILabel?
 
     // MARK: - Colors
 
@@ -121,6 +122,9 @@ class SettingsViewController: UIViewController {
             toggle: voiceSwitch
         ))
 
+        // 2.5) Ses Seçimi satırı
+        stackView.addArrangedSubview(makeVoiceSelectionRow())
+
         // 3) Karanlık Mod
         stackView.addArrangedSubview(makeInfoRow(
             icon: "moon.fill",
@@ -153,6 +157,9 @@ class SettingsViewController: UIViewController {
             title: "Hakkında",
             subtitle: "Masal Dünyası v1.0"
         ))
+
+        // 6.5) Ses Cache Temizle
+        stackView.addArrangedSubview(makeCacheClearRow())
 
         stackView.setCustomSpacing(32, after: stackView.arrangedSubviews.last!)
 
@@ -291,6 +298,135 @@ class SettingsViewController: UIViewController {
         ])
 
         return card
+    }
+
+    // MARK: - Voice Selection Row
+
+    private func makeVoiceSelectionRow() -> UIView {
+        let card = makeCardContainer()
+
+        let selectedVoice = VoiceOption.selectedVoice
+
+        let iconView = makeIconView(systemName: "waveform", color: purpleColor)
+        let labelsStack = makeLabelsStack(title: "Ses Seçimi", subtitle: "\(selectedVoice.emoji) \(selectedVoice.displayName) – \(selectedVoice.description)")
+
+        // Subtitle referansını sakla (seçim sonrası güncelleme için)
+        if let subLabel = labelsStack.arrangedSubviews.last as? UILabel, labelsStack.arrangedSubviews.count > 1 {
+            voiceSelectionSubtitleLabel = subLabel
+        }
+
+        let chevron = UIImageView()
+        chevron.image = UIImage(systemName: "chevron.right")
+        chevron.tintColor = UIColor.white.withAlphaComponent(0.3)
+        chevron.translatesAutoresizingMaskIntoConstraints = false
+
+        card.addSubview(iconView)
+        card.addSubview(labelsStack)
+        card.addSubview(chevron)
+
+        NSLayoutConstraint.activate([
+            card.heightAnchor.constraint(equalToConstant: 64),
+
+            iconView.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 16),
+            iconView.centerYAnchor.constraint(equalTo: card.centerYAnchor),
+            iconView.widthAnchor.constraint(equalToConstant: 36),
+            iconView.heightAnchor.constraint(equalToConstant: 36),
+
+            labelsStack.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 14),
+            labelsStack.centerYAnchor.constraint(equalTo: card.centerYAnchor),
+            labelsStack.trailingAnchor.constraint(lessThanOrEqualTo: chevron.leadingAnchor, constant: -8),
+
+            chevron.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -16),
+            chevron.centerYAnchor.constraint(equalTo: card.centerYAnchor),
+        ])
+
+        // Dokunma algılama
+        let tap = UITapGestureRecognizer(target: self, action: #selector(voiceSelectionTapped))
+        card.addGestureRecognizer(tap)
+        card.isUserInteractionEnabled = true
+
+        return card
+    }
+
+    @objc private func voiceSelectionTapped() {
+        let alert = UIAlertController(title: "Ses Seçimi", message: "Masalları okuması için bir ses seçin", preferredStyle: .actionSheet)
+
+        let currentVoice = VoiceOption.selectedVoice
+
+        for voice in VoiceOption.allVoices {
+            let checkmark = voice.name == currentVoice.name ? " ✓" : ""
+            let title = "\(voice.emoji) \(voice.displayName) – \(voice.description)\(checkmark)"
+            let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
+                VoiceOption.selectedVoice = voice
+                self?.voiceSelectionSubtitleLabel?.text = "\(voice.emoji) \(voice.displayName) – \(voice.description)"
+            }
+            alert.addAction(action)
+        }
+
+        alert.addAction(UIAlertAction(title: "İptal", style: .cancel))
+        present(alert, animated: true)
+    }
+
+    // MARK: - Cache Clear Row
+
+    private var cacheSizeLabel: UILabel?
+
+    private func makeCacheClearRow() -> UIView {
+        let card = makeCardContainer()
+
+        let cacheSize = AudioCacheManager.shared.formattedCacheSize
+        let iconView = makeIconView(systemName: "trash.fill", color: UIColor(red: 1, green: 0.55, blue: 0.35, alpha: 1))
+        let labelsStack = makeLabelsStack(title: "Ses Önbelleğini Temizle", subtitle: "Kullanılan alan: \(cacheSize)")
+
+        if let subLabel = labelsStack.arrangedSubviews.last as? UILabel, labelsStack.arrangedSubviews.count > 1 {
+            cacheSizeLabel = subLabel
+        }
+
+        let chevron = UIImageView()
+        chevron.image = UIImage(systemName: "chevron.right")
+        chevron.tintColor = UIColor.white.withAlphaComponent(0.3)
+        chevron.translatesAutoresizingMaskIntoConstraints = false
+
+        card.addSubview(iconView)
+        card.addSubview(labelsStack)
+        card.addSubview(chevron)
+
+        NSLayoutConstraint.activate([
+            card.heightAnchor.constraint(equalToConstant: 64),
+
+            iconView.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 16),
+            iconView.centerYAnchor.constraint(equalTo: card.centerYAnchor),
+            iconView.widthAnchor.constraint(equalToConstant: 36),
+            iconView.heightAnchor.constraint(equalToConstant: 36),
+
+            labelsStack.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 14),
+            labelsStack.centerYAnchor.constraint(equalTo: card.centerYAnchor),
+            labelsStack.trailingAnchor.constraint(lessThanOrEqualTo: chevron.leadingAnchor, constant: -8),
+
+            chevron.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -16),
+            chevron.centerYAnchor.constraint(equalTo: card.centerYAnchor),
+        ])
+
+        let tap = UITapGestureRecognizer(target: self, action: #selector(clearCacheTapped))
+        card.addGestureRecognizer(tap)
+        card.isUserInteractionEnabled = true
+
+        return card
+    }
+
+    @objc private func clearCacheTapped() {
+        let cacheSize = AudioCacheManager.shared.formattedCacheSize
+        let alert = UIAlertController(
+            title: "Önbelleği Temizle",
+            message: "Tüm indirilen ses dosyaları silinecek (\(cacheSize)). Masallar tekrar dinlendiğinde ses yeniden indirilecektir.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "İptal", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Temizle", style: .destructive) { [weak self] _ in
+            AudioCacheManager.shared.clearAllCache()
+            self?.cacheSizeLabel?.text = "Kullanılan alan: \(AudioCacheManager.shared.formattedCacheSize)"
+        })
+        present(alert, animated: true)
     }
 
     // MARK: - Info Row (subtitle veya badge)

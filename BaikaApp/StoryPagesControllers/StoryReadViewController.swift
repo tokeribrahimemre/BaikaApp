@@ -2,6 +2,7 @@ import UIKit
 import AVFoundation
 import FirebaseFirestore
 import FirebaseAuth
+import FirebaseStorage
 
 class StoryReadViewController: UIViewController {
 
@@ -120,11 +121,21 @@ class StoryReadViewController: UIViewController {
         setupUI()
         configureContent()
         checkIfAlreadySaved()
+        
+        // Ses yüklenirken IndicatorView göster
+        speechService.onLoadingStateChanged = { isLoading in
+            if isLoading {
+                IndicatorView.shared.showIndicator()
+            } else {
+                IndicatorView.shared.removeIndicator()
+            }
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         speechService.stop()
+        IndicatorView.shared.removeIndicator()
     }
 
     // MARK: - Setup
@@ -324,11 +335,12 @@ class StoryReadViewController: UIViewController {
     }
 
     @objc private func listenTapped() {
-        if speechService.isSpeaking || speechService.isPaused {
+        if speechService.isSpeaking || speechService.isPaused || speechService.isLoading {
             speechService.stop()
             isSpeaking = false
             updateListenButton(speaking: false)
             resetHighlight()
+            IndicatorView.shared.removeIndicator()
             return
         }
 
@@ -339,7 +351,13 @@ class StoryReadViewController: UIViewController {
         isSpeaking = true
         updateListenButton(speaking: true)
         speechService.delegate = self
-        speechService.startSpeaking(text: story.content)
+        
+        // Kaydedilmiş hikaye ise Storage'dan oynat, değilse TTS ile oluştur (sadece disk cache)
+        if let audioPath = story.audioStoragePath, !audioPath.isEmpty {
+            speechService.startSpeakingFromStorage(text: story.content, storagePath: audioPath)
+        } else {
+            speechService.startSpeaking(text: story.content)
+        }
     }
 
     private func updateListenButton(speaking: Bool) {
@@ -360,7 +378,7 @@ class StoryReadViewController: UIViewController {
         guard !isSaved else { return }
         
         // Auth kontrolü - kullanıcı giriş yapmamışsa uyar
-        guard Auth.auth().currentUser != nil else {
+        guard let uid = Auth.auth().currentUser?.uid else {
             let alert = UIAlertController(title: "Hata", message: "Kaydetmek için giriş yapmanız gerekiyor.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Tamam", style: .default))
             present(alert, animated: true)
@@ -370,12 +388,38 @@ class StoryReadViewController: UIViewController {
         saveButton.isEnabled = false
         configureActionButton(saveButton, title: "  Kaydediliyor...", icon: "hourglass", bgColor: purpleColor.withAlphaComponent(0.15), borderColor: purpleColor.withAlphaComponent(0.4), titleColor: purpleColor)
 
+        // Chunk'ları doğru sırayla birleştirerek tek MP3 elde et
+        let mergedAudio = speechService.mergedAudioDataForSave()
+
+        if let audioData = mergedAudio {
+            let audioFileName = UUID().uuidString + ".mp3"
+            let storagePath = "users/\(uid)/storyAudio/\(audioFileName)"
+            let storageRef = Storage.storage().reference().child(storagePath)
+
+            storageRef.putData(audioData, metadata: StorageMetadata(dictionary: ["contentType": "audio/mpeg"])) { [weak self] _, error in
+                guard let self = self else { return }
+                if let error = error {
+                    print("Storage yükleme hatası: \(error.localizedDescription)")
+                    self.saveStoryToFirestore(uid: uid, audioStoragePath: nil)
+                } else {
+                    print("✅ Birleşik ses Storage'a yüklendi: \(storagePath)")
+                    self.saveStoryToFirestore(uid: uid, audioStoragePath: storagePath)
+                }
+            }
+        } else {
+            // Ses henüz hazır değil veya hiç oluşturulmadı — sessiz kaydet
+            saveStoryToFirestore(uid: uid, audioStoragePath: nil)
+        }
+    }
+
+    private func saveStoryToFirestore(uid: String, audioStoragePath: String?) {
         let createdStory = CreatedStory(
             title: story.title,
             content: story.content,
             ageCategory: story.ageGroup,
             imageURL: story.characterEmoji,
-            createdAt: Date()
+            createdAt: Date(),
+            audioStoragePath: audioStoragePath
         )
 
         CreatedStoriesManager.shared.saveCreatedStory(createdStory) { [weak self] success in

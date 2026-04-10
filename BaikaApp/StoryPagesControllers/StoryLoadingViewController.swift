@@ -23,6 +23,7 @@ struct GeneratedStory {
     let place: String
     let theme: String
     let ageGroup: String
+    var audioStoragePath: String? = nil
 }
 
 class StoryLoadingViewController: UIViewController {

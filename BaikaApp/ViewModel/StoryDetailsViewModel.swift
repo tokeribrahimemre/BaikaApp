@@ -62,12 +62,10 @@ class StoryDetailsViewModel {
     func togglePlayback() {
         switch speechState {
         case .idle:
-            // Ses ayarı kapalıysa hiç başlatma
             let isSoundEnabled = UserDefaults.standard.object(forKey: "isSoundEnabled") as? Bool ?? true
             guard isSoundEnabled else { return }
-            
             speechState = .loading
-            speechService.startSpeaking(text: story.description)
+            speechService.startSpeakingForStory(text: story.description, storyID: storyID)
         case .playing:
             speechService.pause()
             speechState = .paused
@@ -75,7 +73,10 @@ class StoryDetailsViewModel {
             speechService.resume()
             speechState = .playing
         case .loading:
-            break
+            // Yükleme sırasında tekrar basıldıysa iptal et
+            speechService.stop()
+            speechState = .idle
+            onResetText?(story.description)
         }
     }
 

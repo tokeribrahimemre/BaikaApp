@@ -3,6 +3,7 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
+import FirebaseStorage
 
 final class CreatedStoriesManager {
 
@@ -45,7 +46,8 @@ final class CreatedStoriesManager {
                             content: data["content"] as? String ?? "",
                             ageCategory: data["ageCategory"] as? String ?? "",
                             imageURL: data["imageURL"] as? String ?? "",
-                            createdAt: (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
+                            createdAt: (data["createdAt"] as? Timestamp)?.dateValue() ?? Date(),
+                            audioStoragePath: data["audioStoragePath"] as? String
                         )
                     }
                     self.hasFetchedFromRemote = true
@@ -70,13 +72,17 @@ final class CreatedStoriesManager {
             return
         }
 
-        let data: [String: Any] = [
+        var data: [String: Any] = [
             "title": story.title,
             "content": story.content,
             "ageCategory": story.ageCategory,
             "imageURL": story.imageURL,
             "createdAt": Timestamp(date: story.createdAt)
         ]
+
+        if let audioPath = story.audioStoragePath {
+            data["audioStoragePath"] = audioPath
+        }
 
         db.collection("users").document(uid).collection("createdStories")
             .addDocument(data: data) { [weak self] error in
@@ -95,10 +101,25 @@ final class CreatedStoriesManager {
             return
         }
 
+        // Silinecek hikayenin audioStoragePath'ini bul
+        let audioPath = cachedStories.first(where: { $0.id == id })?.audioStoragePath
+
         db.collection("users").document(uid).collection("createdStories")
             .document(id).delete { [weak self] error in
                 if error == nil {
                     self?.cachedStories.removeAll { $0.id == id }
+                    
+                    // Firebase Storage'dan ses dosyasını sil
+                    if let audioPath = audioPath, !audioPath.isEmpty {
+                        Storage.storage().reference().child(audioPath).delete { storageError in
+                            if let storageError = storageError {
+                                print("Storage ses silme hatası: \(storageError.localizedDescription)")
+                            } else {
+                                print("🗑️ Storage'dan ses dosyası silindi: \(audioPath)")
+                            }
+                        }
+                    }
+                    
                     DispatchQueue.main.async {
                         NotificationCenter.default.post(
                             name: CreatedStoriesManager.storiesDidChangeNotification,
