@@ -78,6 +78,79 @@ class StoryLoadingViewController: UIViewController {
     private var dotsTimer: Timer?
     private var currentDotIndex = 0
 
+    // MARK: - Error UI Elements
+
+    private let errorContainerView: UIView = {
+        let v = UIView()
+        v.alpha = 0
+        v.isHidden = true
+        v.translatesAutoresizingMaskIntoConstraints = false
+        return v
+    }()
+
+    private let errorIconView: UIImageView = {
+        let iv = UIImageView()
+        let config = UIImage.SymbolConfiguration(pointSize: 50, weight: .light)
+        iv.image = UIImage(systemName: "exclamationmark.icloud.fill", withConfiguration: config)
+        iv.tintColor = UIColor(red: 255/255, green: 100/255, blue: 100/255, alpha: 1.0)
+        iv.contentMode = .scaleAspectFit
+        iv.translatesAutoresizingMaskIntoConstraints = false
+        return iv
+    }()
+
+    private let errorTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Bir sorun oluştu"
+        label.textColor = .white
+        label.font = UIFont(name: "Nunito-Bold", size: 20) ?? .boldSystemFont(ofSize: 20)
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private let errorMessageLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Yapay zeka şu anda yoğun. Lütfen tekrar deneyin."
+        label.textColor = UIColor.white.withAlphaComponent(0.5)
+        label.font = UIFont(name: "Nunito-Regular", size: 14) ?? .systemFont(ofSize: 14)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private let retryButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Tekrar Dene ✨", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont(name: "Nunito-Bold", size: 16) ?? .boldSystemFont(ofSize: 16)
+        button.layer.cornerRadius = 25
+        button.clipsToBounds = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
+    private let retryButtonGradient: CAGradientLayer = {
+        let gl = CAGradientLayer()
+        gl.colors = [
+            UIColor(red: 100/255, green: 60/255, blue: 200/255, alpha: 1.0).cgColor,
+            UIColor(red: 150/255, green: 80/255, blue: 220/255, alpha: 1.0).cgColor
+        ]
+        gl.startPoint = CGPoint(x: 0, y: 0.5)
+        gl.endPoint = CGPoint(x: 1, y: 0.5)
+        gl.cornerRadius = 25
+        return gl
+    }()
+
+    private let cancelButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("İptal", for: .normal)
+        button.setTitleColor(UIColor.white.withAlphaComponent(0.6), for: .normal)
+        button.titleLabel?.font = UIFont(name: "Nunito-SemiBold", size: 16) ?? .systemFont(ofSize: 16, weight: .semibold)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
@@ -102,6 +175,18 @@ class StoryLoadingViewController: UIViewController {
         view.addSubview(titleLabel)
         view.addSubview(subtitleLabel)
         view.addSubview(dotsStackView)
+
+        // Error UI
+        view.addSubview(errorContainerView)
+        errorContainerView.addSubview(errorIconView)
+        errorContainerView.addSubview(errorTitleLabel)
+        errorContainerView.addSubview(errorMessageLabel)
+        errorContainerView.addSubview(retryButton)
+        errorContainerView.addSubview(cancelButton)
+
+        retryButton.layer.insertSublayer(retryButtonGradient, at: 0)
+        retryButton.addTarget(self, action: #selector(retryTapped), for: .touchUpInside)
+        cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
 
         // Dots
         let purpleColor = UIColor(red: 120/255, green: 80/255, blue: 220/255, alpha: 1.0)
@@ -129,7 +214,35 @@ class StoryLoadingViewController: UIViewController {
             subtitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
             dotsStackView.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 20),
-            dotsStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            dotsStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+
+            // Error container
+            errorContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            errorContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            errorContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            errorContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
+
+            errorIconView.topAnchor.constraint(equalTo: errorContainerView.topAnchor),
+            errorIconView.centerXAnchor.constraint(equalTo: errorContainerView.centerXAnchor),
+            errorIconView.widthAnchor.constraint(equalToConstant: 60),
+            errorIconView.heightAnchor.constraint(equalToConstant: 60),
+
+            errorTitleLabel.topAnchor.constraint(equalTo: errorIconView.bottomAnchor, constant: 20),
+            errorTitleLabel.leadingAnchor.constraint(equalTo: errorContainerView.leadingAnchor),
+            errorTitleLabel.trailingAnchor.constraint(equalTo: errorContainerView.trailingAnchor),
+
+            errorMessageLabel.topAnchor.constraint(equalTo: errorTitleLabel.bottomAnchor, constant: 8),
+            errorMessageLabel.leadingAnchor.constraint(equalTo: errorContainerView.leadingAnchor),
+            errorMessageLabel.trailingAnchor.constraint(equalTo: errorContainerView.trailingAnchor),
+
+            retryButton.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 32),
+            retryButton.leadingAnchor.constraint(equalTo: errorContainerView.leadingAnchor),
+            retryButton.trailingAnchor.constraint(equalTo: errorContainerView.trailingAnchor),
+            retryButton.heightAnchor.constraint(equalToConstant: 50),
+
+            cancelButton.topAnchor.constraint(equalTo: retryButton.bottomAnchor, constant: 12),
+            cancelButton.centerXAnchor.constraint(equalTo: errorContainerView.centerXAnchor),
+            cancelButton.bottomAnchor.constraint(equalTo: errorContainerView.bottomAnchor)
         ])
     }
 
@@ -233,11 +346,58 @@ class StoryLoadingViewController: UIViewController {
         return emojis.isEmpty ? "✨📖" : emojis
     }
 
+    // MARK: - Error Handling
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        retryButtonGradient.frame = retryButton.bounds
+    }
+
     private func showError(_ error: Error) {
-        let alert = UIAlertController(title: "Hata", message: error.localizedDescription, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Geri Dön", style: .default) { [weak self] _ in
-            self?.navigationController?.popViewController(animated: true)
-        })
-        present(alert, animated: true)
+        // Loading elemanlarını gizle
+        starImageView.isHidden = true
+        titleLabel.isHidden = true
+        subtitleLabel.isHidden = true
+        dotsStackView.isHidden = true
+
+        // Hata mesajını belirle
+        let message: String
+        if error.localizedDescription.contains("high demand") || error.localizedDescription.contains("INTERNAL") {
+            message = "Yapay zeka şu anda yoğun.\nLütfen biraz bekleyip tekrar deneyin."
+        } else {
+            message = error.localizedDescription
+        }
+        errorMessageLabel.text = message
+
+        // Error container'ı göster
+        errorContainerView.isHidden = false
+        UIView.animate(withDuration: 0.35) {
+            self.errorContainerView.alpha = 1
+        }
+    }
+
+    private func hideError() {
+        errorContainerView.alpha = 0
+        errorContainerView.isHidden = true
+
+        starImageView.isHidden = false
+        titleLabel.isHidden = false
+        subtitleLabel.isHidden = false
+        dotsStackView.isHidden = false
+    }
+
+    @objc private func retryTapped() {
+        hideError()
+        startAnimations()
+        generateStory()
+    }
+
+    @objc private func cancelTapped() {
+        // presentingViewController'ı dismiss öncesinde yakala
+        let presenter = self.presentingViewController
+        dismiss(animated: true) {
+            // CreateAIStoryVC'yi de kapat → anasayfaya dön
+            presenter?.dismiss(animated: true)
+        }
     }
 }

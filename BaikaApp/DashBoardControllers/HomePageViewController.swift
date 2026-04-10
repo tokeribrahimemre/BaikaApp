@@ -39,7 +39,7 @@ class HomePageViewController: UIViewController {
         super.viewDidLoad()
         setupBackground()
         setupCards()
-       
+        setupTipCard()
     }
     
     private func animateStarIcon() {
@@ -133,10 +133,98 @@ class HomePageViewController: UIViewController {
                                 
     }
     
+    // MARK: - Tip Card
+    
+    private func setupTipCard() {
+        // voiceStoryCard'ın parent'ları üzerinden ana stackView'a ulaş
+        // Yapı: mainStackView > cardsStackView > wrapperView > voiceStoryCard
+        guard let cardsStack = voiceStoryCard.superview?.superview,
+              let mainStack = cardsStack.superview as? UIStackView else { return }
+        
+        // Wrapper view (padding için)
+        let wrapperView = UIView()
+        wrapperView.translatesAutoresizingMaskIntoConstraints = false
+        wrapperView.backgroundColor = .clear
+        
+        // Tip container
+        let tipContainer = UIView()
+        tipContainer.translatesAutoresizingMaskIntoConstraints = false
+        tipContainer.backgroundColor = UIColor.white.withAlphaComponent(0.06)
+        tipContainer.layer.cornerRadius = 16
+        tipContainer.layer.borderWidth = 1
+        tipContainer.layer.borderColor = UIColor.white.withAlphaComponent(0.08).cgColor
+        
+        // Horizontal stack: icon + text
+        let hStack = UIStackView()
+        hStack.axis = .horizontal
+        hStack.alignment = .top
+        hStack.spacing = 10
+        hStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Lightbulb emoji
+        let iconLabel = UILabel()
+        iconLabel.text = "💡"
+        iconLabel.font = .systemFont(ofSize: 20)
+        iconLabel.translatesAutoresizingMaskIntoConstraints = false
+        iconLabel.setContentHuggingPriority(.required, for: .horizontal)
+        iconLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        
+        // Tip text with attributed string
+        let tipLabel = UILabel()
+        tipLabel.numberOfLines = 0
+        tipLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        let fullText = "İpucu: Her masal o an sadece size özel olarak sıfırdan yazılır ve özenle seslendirilir. Bu büyülü hazırlık birkaç saniye sürebilir, beklediğinize kesinlikle değecek!"
+        let attributed = NSMutableAttributedString(
+            string: fullText,
+            attributes: [
+                .font: UIFont(name: "Nunito-Regular", size: 13) ?? .systemFont(ofSize: 13),
+                .foregroundColor: UIColor.white.withAlphaComponent(0.5)
+            ]
+        )
+        // "İpucu:" kısmını bold yap
+        if let range = fullText.range(of: "İpucu:") {
+            let nsRange = NSRange(range, in: fullText)
+            attributed.addAttributes([
+                .font: UIFont(name: "Nunito-Bold", size: 13) ?? .boldSystemFont(ofSize: 13),
+                .foregroundColor: UIColor.white.withAlphaComponent(0.7)
+            ], range: nsRange)
+        }
+        tipLabel.attributedText = attributed
+        
+        // Assemble
+        hStack.addArrangedSubview(iconLabel)
+        hStack.addArrangedSubview(tipLabel)
+        
+        tipContainer.addSubview(hStack)
+        wrapperView.addSubview(tipContainer)
+        
+        NSLayoutConstraint.activate([
+            hStack.topAnchor.constraint(equalTo: tipContainer.topAnchor, constant: 14),
+            hStack.leadingAnchor.constraint(equalTo: tipContainer.leadingAnchor, constant: 14),
+            hStack.trailingAnchor.constraint(equalTo: tipContainer.trailingAnchor, constant: -14),
+            hStack.bottomAnchor.constraint(equalTo: tipContainer.bottomAnchor, constant: -14),
+            
+            tipContainer.topAnchor.constraint(equalTo: wrapperView.topAnchor),
+            tipContainer.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
+            tipContainer.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
+            tipContainer.bottomAnchor.constraint(lessThanOrEqualTo: wrapperView.bottomAnchor)
+        ])
+        
+        mainStack.addArrangedSubview(wrapperView)
+        
+        // Add a flexible spacer to prevent wrapperView (and tipContainer) from stretching vertically
+        let spacer = UIView()
+        spacer.setContentHuggingPriority(UILayoutPriority(1), for: .vertical)
+        spacer.setContentCompressionResistancePriority(UILayoutPriority(1), for: .vertical)
+        spacer.backgroundColor = .clear
+        mainStack.addArrangedSubview(spacer)
+    }
+    
    // HomePageViewController.swift içinde
    
    
-    @IBAction func readStoriesCardTapped(_ sender: Any) {        
+    @IBAction func readStoriesCardTapped(_ sender: Any) {
         tabBarController?.selectedIndex = 1
         
     }
@@ -159,4 +247,3 @@ class HomePageViewController: UIViewController {
     
 
 }
-
