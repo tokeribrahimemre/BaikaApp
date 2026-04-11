@@ -124,7 +124,7 @@ class CreateAIStoryViewController: UIViewController {
         ]),
         Step(title: "Tema", subtitle: "Hikayenin temasını seçin", type: .listSelection, options: [
             StepOption(emoji: "❤️", title: "Işıklık"),
-            StepOption(emoji: "😊", title: "Pozitifma"),
+            StepOption(emoji: "😊", title: "Pozitiflik"),
             StepOption(emoji: "🌙", title: "Uyku"),
             StepOption(emoji: "🤝", title: "Arkadaşlık"),
             StepOption(emoji: "🌍", title: "Cesaret")
@@ -132,7 +132,7 @@ class CreateAIStoryViewController: UIViewController {
         Step(title: "Yaş Grubu", subtitle: "Yaş grubunu seçin", type: .listSelection, options: [
             StepOption(emoji: "👶", title: "0-2 Yaş"),
             StepOption(emoji: "🧒", title: "3-4 Yaş"),
-            StepOption(emoji: "👦", title: "5-8 Yaş")
+            StepOption(emoji: "👦", title: "5-6 Yaş")
         ])
     ]
 

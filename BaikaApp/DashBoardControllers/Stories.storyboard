@@ -375,7 +375,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="backButton" width="40" height="40"/>
+        <image name="book.fill" width="128" height="128"/>
         <image name="clock" catalog="system" width="128" height="123"/>
         <image name="emptyImage" width="48" height="48"/>
         <image name="q" width="334" height="144"/>

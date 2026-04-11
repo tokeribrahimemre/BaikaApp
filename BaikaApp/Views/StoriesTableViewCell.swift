@@ -47,6 +47,7 @@ class StoriesTableViewCell: UITableViewCell {
     func configureCell(with story: Story) {
         storyImageView.loadImage(from: story.imageURL)
         titleLabel.text = story.title
+        ageLabel.text = story.ageCategory
         timeLabel.text = story.time
         emojiImageView.setThemeEmoji(story.themeCategory, size: CGSize(width: 12, height: 12))
         themeLabel.text = story.themeCategory

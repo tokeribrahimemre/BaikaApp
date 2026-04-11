@@ -10,10 +10,9 @@ protocol StoryServiceProtocol {
     class StoryService: StoryServiceProtocol {
         
         func generateStory(parameters: StoryParameters) async throws -> String {
-            let ai = FirebaseAI.firebaseAI(backend: .googleAI())
+            let ai = FirebaseAI.firebaseAI(backend: .vertexAI())
             let model = ai.templateGenerativeModel()
             let templateID = "createstory" // Kendi şablon adın
-            
             // API çağrısı
             let response = try await model.generateContent(
                 templateID: templateID,
@@ -28,4 +27,3 @@ protocol StoryServiceProtocol {
             return text
         }
     }
-    
