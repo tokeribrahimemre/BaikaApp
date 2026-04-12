@@ -293,6 +293,19 @@ class StoryLoadingViewController: UIViewController {
         Task {
             do {
                 let text = try await service.generateStory(parameters: storyParameters)
+                
+                if text.contains("[ERROR_BAD_INPUT]") {
+                    await MainActor.run {
+                        self.stopAnimations()
+                        let alert = UIAlertController(title: "Uyarı", message: "Yasaklı kelime kullanılamaz.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Tamam", style: .default) { _ in
+                            self.dismiss(animated: true)
+                        })
+                        self.present(alert, animated: true)
+                    }
+                    return
+                }
+                
                 // Dinamik başlık: "Ev ve Ayıcık'ın Masalı" veya fallback
                 let dynamicTitle: String
                 let name = self.storyParameters.childName.trimmingCharacters(in: .whitespacesAndNewlines)

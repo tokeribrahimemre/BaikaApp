@@ -3,6 +3,7 @@ import AVFoundation
 import FirebaseFirestore
 import FirebaseAuth
 import FirebaseStorage
+import Network
 
 class StoryReadViewController: UIViewController {
 
@@ -348,16 +349,37 @@ class StoryReadViewController: UIViewController {
         let isSoundEnabled = UserDefaults.standard.object(forKey: "isSoundEnabled") as? Bool ?? true
         guard isSoundEnabled else { return }
 
-        isSpeaking = true
-        updateListenButton(speaking: true)
-        speechService.delegate = self
+        let monitor = NWPathMonitor()
+        let queue = DispatchQueue(label: "NetworkMonitor")
+        var isNetworkHandled = false
         
-        // Kaydedilmiş hikaye ise Storage'dan oynat, değilse TTS ile oluştur (sadece disk cache)
-        if let audioPath = story.audioStoragePath, !audioPath.isEmpty {
-            speechService.startSpeakingFromStorage(text: story.content, storagePath: audioPath)
-        } else {
-            speechService.startSpeaking(text: story.content)
+        monitor.pathUpdateHandler = { [weak self] path in
+            guard !isNetworkHandled else { return }
+            isNetworkHandled = true
+            
+            DispatchQueue.main.async {
+                monitor.cancel()
+                guard let self = self else { return }
+                
+                if path.status == .satisfied {
+                    self.isSpeaking = true
+                    self.updateListenButton(speaking: true)
+                    self.speechService.delegate = self
+                    
+                    // Kaydedilmiş hikaye ise Storage'dan oynat, değilse TTS ile oluştur (sadece disk cache)
+                    if let audioPath = self.story.audioStoragePath, !audioPath.isEmpty {
+                        self.speechService.startSpeakingFromStorage(text: self.story.content, storagePath: audioPath)
+                    } else {
+                        self.speechService.startSpeaking(text: self.story.content)
+                    }
+                } else {
+                    let alert = UIAlertController(title: "Bağlantı Hatası", message: "Lütfen internet bağlantınızı kontrol edip tekrar deneyin.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+                    self.present(alert, animated: true)
+                }
+            }
         }
+        monitor.start(queue: queue)
     }
 
     private func updateListenButton(speaking: Bool) {

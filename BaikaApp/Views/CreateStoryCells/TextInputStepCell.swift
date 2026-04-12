@@ -88,6 +88,13 @@ class TextInputStepCell: UICollectionViewCell, UITextFieldDelegate {
         return true
     }
 
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        return updatedText.count <= 15
+    }
+
     func configure(with step: Step) {
         titleLabel.text = step.title
         subtitleLabel.text = step.subtitle

@@ -1,11 +1,14 @@
 // BaikaApp/StoryPagesControllers/PlaylistViewController.swift
 
 import UIKit
+import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
+import Network
 
 // MARK: - Birleşik Playlist Modeli
 
-struct PlaylistItem {
+struct PlaylistItem: Equatable {
     let title: String
     let subtitle: String
     let content: String
@@ -311,13 +314,38 @@ class PlaylistViewController: UIViewController {
     @objc private func playTapped() {
         guard !selectedIndices.isEmpty else { return }
 
-        let sortedIndices = selectedIndices.sorted()
-        let selectedItems = sortedIndices.map { playlistItems[$0] }
+        let monitor = NWPathMonitor()
+        let queue = DispatchQueue(label: "NetworkMonitor")
+        
+        // Timeout için fallback
+        var isNetworkHandled = false
+        
+        monitor.pathUpdateHandler = { path in
+            guard !isNetworkHandled else { return }
+            isNetworkHandled = true
+            
+            DispatchQueue.main.async {
+                monitor.cancel()
+                
+                if path.status == .satisfied {
+                    let sortedIndices = self.selectedIndices.sorted()
+                    let selectedItems = sortedIndices.map { self.playlistItems[$0] }
 
-        let playerVC = PlayerViewController()
-        playerVC.playlist = selectedItems
-        playerVC.modalPresentationStyle = .fullScreen
-        present(playerVC, animated: true)
+                    let playerVC = PlayerViewController()
+                    playerVC.playlist = selectedItems
+                    playerVC.modalPresentationStyle = .fullScreen
+                    self.present(playerVC, animated: true)
+                } else {
+                    let alert = UIAlertController(title: "Bağlantı Hatası", message: "Lütfen internet bağlantınızı kontrol edip tekrar deneyin.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+                    self.present(alert, animated: true)
+                }
+            }
+        }
+        
+        monitor.start(queue: queue)
+        
+        // Ağ durumu çok hızlı dönmezse diye (nadiren olur) küçük bir bekleme ekleyebiliriz ama pathUpdateHandler genellikle anında çalışır.
     }
 }
 

@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import FirebaseAuth
+import Network
 
 class StoryDetailsViewController: UIViewController {
 
@@ -176,6 +178,30 @@ class StoryDetailsViewController: UIViewController {
     // MARK: - Actions
 
     @objc private func listenButtonTapped() {
-        viewModel.togglePlayback()
+        if viewModel.speechState == .playing || viewModel.speechState == .paused || viewModel.speechState == .loading {
+            viewModel.togglePlayback()
+            return
+        }
+        
+        let monitor = NWPathMonitor()
+        let queue = DispatchQueue(label: "NetworkMonitor")
+        var isNetworkHandled = false
+        
+        monitor.pathUpdateHandler = { [weak self] path in
+            guard !isNetworkHandled else { return }
+            isNetworkHandled = true
+            
+            DispatchQueue.main.async {
+                monitor.cancel()
+                if path.status == .satisfied {
+                    self?.viewModel.togglePlayback()
+                } else {
+                    let alert = UIAlertController(title: "Bağlantı Hatası", message: "Lütfen internet bağlantınızı kontrol edip tekrar deneyin.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+                    self?.present(alert, animated: true)
+                }
+            }
+        }
+        monitor.start(queue: queue)
     }
 }
