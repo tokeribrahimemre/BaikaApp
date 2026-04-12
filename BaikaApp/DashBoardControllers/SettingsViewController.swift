@@ -143,11 +143,12 @@ class SettingsViewController: UIViewController {
         ))
 
         // 5) Gizlilik
-        stackView.addArrangedSubview(makeInfoRow(
+        stackView.addArrangedSubview(makeActionRow(
             icon: "lock.shield.fill",
             iconColor: .white,
             title: "Gizlilik",
-            subtitle: "Veri toplanmaz, giriş gerektirmez"
+            subtitle: "Veri toplanmaz, Sadece favori haikayelerinizi kaydetmek için giriş yapılır",
+            action: #selector(openPrivacyPolicy)
         ))
 
         // 6) Hakkında
@@ -489,6 +490,46 @@ class SettingsViewController: UIViewController {
         return card
     }
 
+    // MARK: - Action Row
+
+    private func makeActionRow(icon: String, iconColor: UIColor = .white, title: String, subtitle: String? = nil, action: Selector) -> UIView {
+        let card = makeCardContainer()
+
+        let iconView = makeIconView(systemName: icon, color: iconColor)
+        let labelsStack = makeLabelsStack(title: title, subtitle: subtitle)
+
+        let chevron = UIImageView()
+        chevron.image = UIImage(systemName: "chevron.right")
+        chevron.tintColor = UIColor.white.withAlphaComponent(0.3)
+        chevron.translatesAutoresizingMaskIntoConstraints = false
+
+        card.addSubview(iconView)
+        card.addSubview(labelsStack)
+        card.addSubview(chevron)
+
+        NSLayoutConstraint.activate([
+            card.heightAnchor.constraint(equalToConstant: 64),
+
+            iconView.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 16),
+            iconView.centerYAnchor.constraint(equalTo: card.centerYAnchor),
+            iconView.widthAnchor.constraint(equalToConstant: 36),
+            iconView.heightAnchor.constraint(equalToConstant: 36),
+
+            labelsStack.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 14),
+            labelsStack.centerYAnchor.constraint(equalTo: card.centerYAnchor),
+            labelsStack.trailingAnchor.constraint(lessThanOrEqualTo: chevron.leadingAnchor, constant: -8),
+
+            chevron.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -16),
+            chevron.centerYAnchor.constraint(equalTo: card.centerYAnchor),
+        ])
+
+        let tap = UITapGestureRecognizer(target: self, action: action)
+        card.addGestureRecognizer(tap)
+        card.isUserInteractionEnabled = true
+
+        return card
+    }
+
     // MARK: - Footer
 
     private func makeFooterView() -> UIView {
@@ -624,6 +665,11 @@ class SettingsViewController: UIViewController {
     @objc private func voiceSwitchChanged(_ sender: UISwitch) {
         UserDefaults.standard.set(sender.isOn, forKey: "isSoundEnabled")
         voiceSubtitleLabel?.text = sender.isOn ? "Açık" : "Kapalı"
+    }
+
+    @objc private func openPrivacyPolicy() {
+        guard let url = URL(string: "https://holistic-step-fdf.notion.site/Baika-Privacy-Policy-340d1a9f058e802192a5cceea5f5b92f") else { return }
+        UIApplication.shared.open(url)
     }
 
     @objc private func signOutTapped() {
