@@ -698,34 +698,40 @@ class SettingsViewController: UIViewController {
     }
 
     @objc private func openPrivacyPolicy() {
-        guard let url = URL(string: "https://holistic-step-fdf.notion.site/Baika-Privacy-Policy-340d1a9f058e802192a5cceea5f5b92f") else { return }
-        UIApplication.shared.open(url)
+        showParentalGate {
+            guard let url = URL(string: "https://holistic-step-fdf.notion.site/Baika-Privacy-Policy-340d1a9f058e802192a5cceea5f5b92f") else { return }
+            UIApplication.shared.open(url)
+        }
     }
 
     @objc private func signOutTapped() {
-        let alert = UIAlertController(
-            title: "Çıkış Yap",
-            message: "Hesabınızdan çıkış yapmak istediğinize emin misiniz?",
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "İptal", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Çıkış Yap", style: .destructive) { [weak self] _ in
-            self?.performSignOut()
-        })
-        present(alert, animated: true)
+        showParentalGate { [weak self] in
+            let alert = UIAlertController(
+                title: "Çıkış Yap",
+                message: "Hesabınızdan çıkış yapmak istediğinize emin misiniz?",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "İptal", style: .cancel))
+            alert.addAction(UIAlertAction(title: "Çıkış Yap", style: .destructive) { _ in
+                self?.performSignOut()
+            })
+            self?.present(alert, animated: true)
+        }
     }
 
     @objc private func deleteAccountTapped() {
-        let alert = UIAlertController(
-            title: "Hesabı Sil",
-            message: "Hesabınızı ve tüm verilerinizi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "İptal", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Sil", style: .destructive) { [weak self] _ in
-            self?.performAccountDeletion()
-        })
-        present(alert, animated: true)
+        showParentalGate { [weak self] in
+            let alert = UIAlertController(
+                title: "Hesabı Sil",
+                message: "Hesabınızı ve tüm verilerinizi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "İptal", style: .cancel))
+            alert.addAction(UIAlertAction(title: "Sil", style: .destructive) { _ in
+                self?.performAccountDeletion()
+            })
+            self?.present(alert, animated: true)
+        }
     }
 
     private func performAccountDeletion() {
