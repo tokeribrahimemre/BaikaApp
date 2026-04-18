@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class HomePageViewController: UIViewController {
     
@@ -232,6 +233,11 @@ class HomePageViewController: UIViewController {
     @IBAction func createNewStoryTapped(_ sender: Any) {
         print("Create New Story tapped")
         
+        if Auth.auth().currentUser?.isAnonymous == true {
+            showLoginPrompt(message: "Kendi hikayenizi oluşturmak için giriş yapmalısınız.")
+            return
+        }
+        
         let storyboard = UIStoryboard(name: "CreateAIStory", bundle: nil)
         if let createVC = storyboard.instantiateViewController(withIdentifier: "CreateAIStoryVC") as? CreateAIStoryViewController {
             navigationController?.pushViewController(createVC, animated: true)
@@ -239,11 +245,40 @@ class HomePageViewController: UIViewController {
     }
     
     @IBAction func voiceStoryTapped(_ sender: Any) {
+        if Auth.auth().currentUser?.isAnonymous == true {
+            showLoginPrompt(message: "Kendi sesli masalınızı dinlemek için giriş yapmalısınız.")
+            return
+        }
         let playlistVC = PlaylistViewController()
         playlistVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(playlistVC, animated: true)
     }
-    
+
+    private func showLoginPrompt(message: String) {
+        let alert = UIAlertController(title: "Giriş Gerekli", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "İptal", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Giriş Yap", style: .default) { [weak self] _ in
+            self?.navigateToLogin()
+        })
+        present(alert, animated: true)
+    }
+
+    private func navigateToLogin() {
+        do {
+            try Auth.auth().signOut()
+            FavoriteManager.shared.clearCache()
+            CreatedStoriesManager.shared.clearCache()
+
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let window = windowScene.windows.first else { return }
+
+            let loginVC = LoginViewController()
+            window.rootViewController = loginVC
+            UIView.transition(with: window, duration: 0.35, options: .transitionCrossDissolve, animations: nil)
+        } catch {
+            print("Çıkış yaparken hata: \(error.localizedDescription)")
+        }
+    }
     
 
 }

@@ -118,12 +118,78 @@ class StoryDetailsViewController: UIViewController {
     }
 
     @objc private func favoriteButtonTapped(_ sender: Any) {
+        if Auth.auth().currentUser?.isAnonymous == true {
+            showLoginPrompt(message: "Favorilere eklemek için giriş yapmalısınız.")
+            return
+        }
+
         FavoriteManager.shared.toggleFavorite(viewModel.storyID)
         updateFavoriteButton()
 
         // Haptic feedback
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
+    }
+
+    // MARK: - Actions
+
+    @objc private func listenButtonTapped() {
+        if Auth.auth().currentUser?.isAnonymous == true {
+            showLoginPrompt(message: "Hikayeyi dinlemek için giriş yapmalısınız.")
+            return
+        }
+
+        if viewModel.speechState == .playing || viewModel.speechState == .paused || viewModel.speechState == .loading {
+            viewModel.togglePlayback()
+            return
+        }
+        
+        let monitor = NWPathMonitor()
+        let queue = DispatchQueue(label: "NetworkMonitor")
+        var isNetworkHandled = false
+        
+        monitor.pathUpdateHandler = { [weak self] path in
+            guard !isNetworkHandled else { return }
+            isNetworkHandled = true
+            
+            DispatchQueue.main.async {
+                monitor.cancel()
+                if path.status == .satisfied {
+                    self?.viewModel.togglePlayback()
+                } else {
+                    let alert = UIAlertController(title: "Bağlantı Hatası", message: "Lütfen internet bağlantınızı kontrol edip tekrar deneyin.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+                    self?.present(alert, animated: true)
+                }
+            }
+        }
+        monitor.start(queue: queue)
+    }
+
+    private func showLoginPrompt(message: String) {
+        let alert = UIAlertController(title: "Giriş Gerekli", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "İptal", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Giriş Yap", style: .default) { [weak self] _ in
+            self?.navigateToLogin()
+        })
+        present(alert, animated: true)
+    }
+
+    private func navigateToLogin() {
+        do {
+            try Auth.auth().signOut()
+            FavoriteManager.shared.clearCache()
+            CreatedStoriesManager.shared.clearCache()
+
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let window = windowScene.windows.first else { return }
+
+            let loginVC = LoginViewController()
+            window.rootViewController = loginVC
+            UIView.transition(with: window, duration: 0.35, options: .transitionCrossDissolve, animations: nil)
+        } catch {
+            print("Çıkış yaparken hata: \(error.localizedDescription)")
+        }
     }
 
     // MARK: - UI Updates
@@ -173,35 +239,5 @@ class StoryDetailsViewController: UIViewController {
             )
             scrollView.scrollRectToVisible(visibleRect, animated: true)
         }
-    }
-
-    // MARK: - Actions
-
-    @objc private func listenButtonTapped() {
-        if viewModel.speechState == .playing || viewModel.speechState == .paused || viewModel.speechState == .loading {
-            viewModel.togglePlayback()
-            return
-        }
-        
-        let monitor = NWPathMonitor()
-        let queue = DispatchQueue(label: "NetworkMonitor")
-        var isNetworkHandled = false
-        
-        monitor.pathUpdateHandler = { [weak self] path in
-            guard !isNetworkHandled else { return }
-            isNetworkHandled = true
-            
-            DispatchQueue.main.async {
-                monitor.cancel()
-                if path.status == .satisfied {
-                    self?.viewModel.togglePlayback()
-                } else {
-                    let alert = UIAlertController(title: "Bağlantı Hatası", message: "Lütfen internet bağlantınızı kontrol edip tekrar deneyin.", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-                    self?.present(alert, animated: true)
-                }
-            }
-        }
-        monitor.start(queue: queue)
     }
 }
