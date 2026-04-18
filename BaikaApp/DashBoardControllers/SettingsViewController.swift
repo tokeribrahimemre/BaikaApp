@@ -170,6 +170,10 @@ class SettingsViewController: UIViewController {
 
         // 8) Çıkış Yap butonu
         stackView.addArrangedSubview(makeSignOutButton())
+        stackView.setCustomSpacing(12, after: stackView.arrangedSubviews.last!)
+
+        // 9) Hesabı Sil butonu
+        stackView.addArrangedSubview(makeDeleteAccountButton())
     }
 
     // MARK: - Ebeveyn Alanı Kartı
@@ -604,6 +608,32 @@ class SettingsViewController: UIViewController {
         return button
     }
 
+    private func makeDeleteAccountButton() -> UIView {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+
+        var config = UIButton.Configuration.plain()
+        config.title = "Hesabı Sil"
+        config.image = UIImage(systemName: "trash.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold))
+        config.baseForegroundColor = UIColor(red: 1, green: 0.2, blue: 0.2, alpha: 1)
+        config.background.backgroundColor = UIColor(red: 1, green: 0.2, blue: 0.2, alpha: 0.1)
+        config.background.cornerRadius = 14
+        config.background.strokeColor = UIColor(red: 1, green: 0.2, blue: 0.2, alpha: 0.25)
+        config.background.strokeWidth = 1
+        config.imagePadding = 8
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont(name: "Nunito-Bold", size: 16) ?? .boldSystemFont(ofSize: 16)
+            return outgoing
+        }
+        button.configuration = config
+        button.addTarget(self, action: #selector(deleteAccountTapped), for: .touchUpInside)
+
+        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
+
+        return button
+    }
+
     // MARK: - Helpers
 
     private func makeCardContainer() -> UIView {
@@ -683,6 +713,46 @@ class SettingsViewController: UIViewController {
             self?.performSignOut()
         })
         present(alert, animated: true)
+    }
+
+    @objc private func deleteAccountTapped() {
+        let alert = UIAlertController(
+            title: "Hesabı Sil",
+            message: "Hesabınızı ve tüm verilerinizi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "İptal", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Sil", style: .destructive) { [weak self] _ in
+            self?.performAccountDeletion()
+        })
+        present(alert, animated: true)
+    }
+
+    private func performAccountDeletion() {
+        guard let user = Auth.auth().currentUser else { return }
+        
+        user.delete { [weak self] error in
+            if let error = error {
+                let alert = UIAlertController(
+                    title: "Hata",
+                    message: "Hesap silinirken bir hata oluştu. Lütfen yeniden giriş yapıp tekrar deneyin. (\(error.localizedDescription))",
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+                self?.present(alert, animated: true)
+            } else {
+                // Hesabı sildikten sonra cache temizliği ve logine yönlendirme
+                FavoriteManager.shared.clearCache()
+                CreatedStoriesManager.shared.clearCache()
+                
+                guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                      let window = windowScene.windows.first else { return }
+                
+                let loginVC = LoginViewController()
+                window.rootViewController = loginVC
+                UIView.transition(with: window, duration: 0.35, options: .transitionCrossDissolve, animations: nil)
+            }
+        }
     }
 
     private func performSignOut() {

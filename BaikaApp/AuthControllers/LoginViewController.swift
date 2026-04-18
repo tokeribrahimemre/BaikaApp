@@ -232,6 +232,16 @@ class LoginViewController: UIViewController {
         return btn
     }()
 
+    // Skip/Guest Login Button
+    private let guestButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setTitle("Üye Olmadan Devam Et", for: .normal)
+        btn.setTitleColor(UIColor.white.withAlphaComponent(0.6), for: .normal)
+        btn.titleLabel?.font = UIFont(name: "Nunito-SemiBold", size: 15) ?? .systemFont(ofSize: 15, weight: .semibold)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        return btn
+    }()
+
     // Loading indicator
     private let loadingIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .medium)
@@ -316,6 +326,9 @@ class LoginViewController: UIViewController {
         // Action Button
         contentView.addSubview(actionButton)
         actionButton.addSubview(loadingIndicator)
+
+        // Guest Button
+        contentView.addSubview(guestButton)
 
         // Stars
         contentView.addSubview(starsLabel)
@@ -448,8 +461,13 @@ class LoginViewController: UIViewController {
             loadingIndicator.centerXAnchor.constraint(equalTo: actionButton.centerXAnchor),
             loadingIndicator.centerYAnchor.constraint(equalTo: actionButton.centerYAnchor),
 
+            // Guest Button
+            guestButton.topAnchor.constraint(equalTo: actionButton.bottomAnchor, constant: 12),
+            guestButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            guestButton.heightAnchor.constraint(equalToConstant: 44),
+
             // Stars
-            starsLabel.topAnchor.constraint(equalTo: actionButton.bottomAnchor, constant: 40),
+            starsLabel.topAnchor.constraint(equalTo: guestButton.bottomAnchor, constant: 28),
             starsLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             starsLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -40),
         ])
@@ -459,6 +477,7 @@ class LoginViewController: UIViewController {
         loginSegmentButton.addTarget(self, action: #selector(segmentTapped(_:)), for: .touchUpInside)
         registerSegmentButton.addTarget(self, action: #selector(segmentTapped(_:)), for: .touchUpInside)
         actionButton.addTarget(self, action: #selector(actionButtonTapped), for: .touchUpInside)
+        guestButton.addTarget(self, action: #selector(guestButtonTapped), for: .touchUpInside)
         passwordToggleButton.addTarget(self, action: #selector(togglePasswordVisibility(_:)), for: .touchUpInside)
         confirmPasswordToggleButton.addTarget(self, action: #selector(toggleConfirmPasswordVisibility(_:)), for: .touchUpInside)
     }
@@ -508,6 +527,23 @@ class LoginViewController: UIViewController {
     }
 
     // MARK: - Actions
+
+    @objc private func guestButtonTapped() {
+        setLoading(true)
+        Auth.auth().signInAnonymously { [weak self] result, error in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                self.setLoading(false)
+                
+                if let error = error {
+                    self.showError("Misafir girişi başarısız: \(error.localizedDescription)")
+                    return
+                }
+                
+                self.navigateToApp()
+            }
+        }
+    }
 
     @objc private func actionButtonTapped() {
         dismissKeyboard()
@@ -629,6 +665,7 @@ class LoginViewController: UIViewController {
 
     private func setLoading(_ loading: Bool) {
         actionButton.isEnabled = !loading
+        guestButton.isEnabled = !loading
         emailTextField.isEnabled = !loading
         passwordTextField.isEnabled = !loading
         confirmPasswordTextField.isEnabled = !loading
