@@ -62,6 +62,15 @@ class StoryReadViewController: UIViewController {
         return button
     }()
 
+    private let reportButton: UIButton = {
+        let btn = UIButton(type: .system)
+        let config = UIImage.SymbolConfiguration(pointSize: 18)
+        btn.setImage(UIImage(systemName: "exclamationmark.triangle.fill", withConfiguration: config), for: .normal)
+        btn.tintColor = UIColor.white.withAlphaComponent(0.6)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        return btn
+    }()
+
     private let storyTitleCard: UIView = {
         let v = UIView()
         v.backgroundColor = UIColor(red: 30/255, green: 25/255, blue: 60/255, alpha: 1.0)
@@ -149,6 +158,7 @@ class StoryReadViewController: UIViewController {
         view.addSubview(headerTitleLabel)
         view.addSubview(headerSubtitleLabel)
         view.addSubview(sparkleButton)
+        view.addSubview(reportButton)
 
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -165,6 +175,7 @@ class StoryReadViewController: UIViewController {
         listenButton.addTarget(self, action: #selector(listenTapped), for: .touchUpInside)
         saveButton.addTarget(self, action: #selector(saveTapped), for: .touchUpInside)
         regenerateButton.addTarget(self, action: #selector(regenerateTapped), for: .touchUpInside)
+        reportButton.addTarget(self, action: #selector(reportTapped), for: .touchUpInside)
 
         setupButtons()
         setupConstraints()
@@ -210,6 +221,9 @@ class StoryReadViewController: UIViewController {
 
             sparkleButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             sparkleButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+
+            reportButton.trailingAnchor.constraint(equalTo: sparkleButton.leadingAnchor, constant: -16),
+            reportButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
 
             scrollView.topAnchor.constraint(equalTo: headerSubtitleLabel.bottomAnchor, constant: 16),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -299,6 +313,42 @@ class StoryReadViewController: UIViewController {
         }
 
         emojisLabel.text = story.emojis
+    }
+
+    @objc private func reportTapped() {
+        let alert = UIAlertController(
+            title: "İçeriği Şikayet Et",
+            message: "Bu hikayede uygunsuz veya rahatsız edici bir içerik olduğunu düşünüyorsanız lütfen bize bildirin. Şikayetiniz incelenecektir.",
+            preferredStyle: .actionSheet
+        )
+        
+        alert.addAction(UIAlertAction(title: "Şiddet / Korkutucu İçerik", style: .destructive, handler: { [weak self] _ in
+            self?.submitReport()
+        }))
+        alert.addAction(UIAlertAction(title: "Uygunsuz Dil", style: .destructive, handler: { [weak self] _ in
+            self?.submitReport()
+        }))
+        alert.addAction(UIAlertAction(title: "Diğer", style: .destructive, handler: { [weak self] _ in
+            self?.submitReport()
+        }))
+        alert.addAction(UIAlertAction(title: "İptal", style: .cancel, handler: nil))
+        
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = reportButton
+            popoverController.sourceRect = reportButton.bounds
+        }
+        
+        present(alert, animated: true)
+    }
+
+    private func submitReport() {
+        let alert = UIAlertController(
+            title: "Şikayet Alındı",
+            message: "Bildiriminiz ekibimize ulaştı. Geri bildiriminiz için teşekkür ederiz.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Tamam", style: .default, handler: nil))
+        present(alert, animated: true)
     }
 
     /// Hikaye daha önce kaydedilmiş mi kontrol et

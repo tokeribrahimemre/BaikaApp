@@ -34,6 +34,15 @@ class StoryDetailsViewController: UIViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var scrollViewBottomConstraint: NSLayoutConstraint!
 
+    private let reportButton: UIButton = {
+        let btn = UIButton(type: .system)
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)
+        btn.setImage(UIImage(systemName: "exclamationmark.triangle.fill", withConfiguration: config), for: .normal)
+        btn.tintColor = UIColor.white.withAlphaComponent(0.6)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        return btn
+    }()
+
     // MARK: - Init
 
     init?(coder: NSCoder, story: Story) {
@@ -108,6 +117,18 @@ class StoryDetailsViewController: UIViewController {
 
             updateFavoriteButton()
         
+        setupReportButton()
+    }
+    
+    private func setupReportButton() {
+        view.addSubview(reportButton)
+        NSLayoutConstraint.activate([
+            reportButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            reportButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            reportButton.widthAnchor.constraint(equalToConstant: 44),
+            reportButton.heightAnchor.constraint(equalToConstant: 44)
+        ])
+        reportButton.addTarget(self, action: #selector(reportButtonTapped), for: .touchUpInside)
     }
     
     private func updateFavoriteButton() {
@@ -129,6 +150,43 @@ class StoryDetailsViewController: UIViewController {
         // Haptic feedback
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
+    }
+
+    @objc private func reportButtonTapped() {
+        let alert = UIAlertController(
+            title: "İçeriği Şikayet Et",
+            message: "Bu hikayede uygunsuz veya rahatsız edici bir içerik olduğunu düşünüyorsanız lütfen bize bildirin. Şikayetiniz en kısa sürede incelenecektir.",
+            preferredStyle: .actionSheet
+        )
+        
+        alert.addAction(UIAlertAction(title: "Şiddet / Korkutucu İçerik", style: .destructive, handler: { [weak self] _ in
+            self?.submitReport(reason: "Şiddet / Korkutucu İçerik")
+        }))
+        alert.addAction(UIAlertAction(title: "Uygunsuz Dil", style: .destructive, handler: { [weak self] _ in
+            self?.submitReport(reason: "Uygunsuz Dil")
+        }))
+        alert.addAction(UIAlertAction(title: "Diğer", style: .destructive, handler: { [weak self] _ in
+            self?.submitReport(reason: "Diğer")
+        }))
+        alert.addAction(UIAlertAction(title: "İptal", style: .cancel, handler: nil))
+        
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = reportButton
+            popoverController.sourceRect = reportButton.bounds
+        }
+        
+        present(alert, animated: true)
+    }
+
+    private func submitReport(reason: String) {
+        // Normalde burada Firebase Firestore veya bir API'ye şikayet gönderilir
+        let alert = UIAlertController(
+            title: "Şikayet Alındı",
+            message: "Bildiriminiz incelenmek üzere ekibimize ulaşmıştır. Geri bildiriminiz için teşekkür ederiz.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Tamam", style: .default, handler: nil))
+        present(alert, animated: true)
     }
 
     // MARK: - Actions
