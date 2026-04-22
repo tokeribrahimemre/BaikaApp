@@ -449,6 +449,13 @@ class StoryReadViewController: UIViewController {
         // Zaten kaydedilmişse tekrar kaydetme
         guard !isSaved else { return }
         
+        if Auth.auth().currentUser?.isAnonymous == true {
+            let alert = UIAlertController(title: "Hata", message: "Kaydetmek için giriş yapmanız gerekiyor.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+            present(alert, animated: true)
+            return
+        }
+        
         // Auth kontrolü - kullanıcı giriş yapmamışsa uyar
         guard let uid = Auth.auth().currentUser?.uid else {
             let alert = UIAlertController(title: "Hata", message: "Kaydetmek için giriş yapmanız gerekiyor.", preferredStyle: .alert)
@@ -481,6 +488,32 @@ class StoryReadViewController: UIViewController {
         } else {
             // Ses henüz hazır değil veya hiç oluşturulmadı — sessiz kaydet
             saveStoryToFirestore(uid: uid, audioStoragePath: nil)
+        }
+    }
+    
+    private func showLoginPrompt(message: String) {
+        let alert = UIAlertController(title: "Giriş Gerekli", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "İptal", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Giriş Yap", style: .default) { [weak self] _ in
+            self?.navigateToLogin()
+        })
+        present(alert, animated: true)
+    }
+    
+    private func navigateToLogin() {
+        do {
+            try Auth.auth().signOut()
+            FavoriteManager.shared.clearCache()
+            CreatedStoriesManager.shared.clearCache()
+
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let window = windowScene.windows.first else { return }
+
+            let loginVC = LoginViewController()
+            window.rootViewController = loginVC
+            UIView.transition(with: window, duration: 0.35, options: .transitionCrossDissolve, animations: nil)
+        } catch {
+            print("Çıkış yaparken hata: \(error.localizedDescription)")
         }
     }
 

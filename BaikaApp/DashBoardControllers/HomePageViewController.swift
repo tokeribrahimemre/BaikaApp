@@ -233,10 +233,10 @@ class HomePageViewController: UIViewController {
     @IBAction func createNewStoryTapped(_ sender: Any) {
         print("Create New Story tapped")
         
-        if Auth.auth().currentUser?.isAnonymous == true {
-            showLoginPrompt(message: "Kendi hikayenizi oluşturmak için giriş yapmalısınız.")
-            return
-        }
+//        if Auth.auth().currentUser?.isAnonymous == true {
+//            showLoginPrompt(message: "Kendi hikayenizi oluşturmak için giriş yapmalısınız.")
+//            return
+//        }
         
         let storyboard = UIStoryboard(name: "CreateAIStory", bundle: nil)
         if let createVC = storyboard.instantiateViewController(withIdentifier: "CreateAIStoryVC") as? CreateAIStoryViewController {
@@ -245,10 +245,10 @@ class HomePageViewController: UIViewController {
     }
     
     @IBAction func voiceStoryTapped(_ sender: Any) {
-        if Auth.auth().currentUser?.isAnonymous == true {
-            showLoginPrompt(message: "Kendi sesli masalınızı dinlemek için giriş yapmalısınız.")
-            return
-        }
+//        if Auth.auth().currentUser?.isAnonymous == true {
+//            showLoginPrompt(message: "Kendi sesli masalınızı dinlemek için giriş yapmalısınız.")
+//            return
+//        }
         let playlistVC = PlaylistViewController()
         playlistVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(playlistVC, animated: true)

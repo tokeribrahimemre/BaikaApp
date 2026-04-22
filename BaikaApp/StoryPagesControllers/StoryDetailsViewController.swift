@@ -192,10 +192,10 @@ class StoryDetailsViewController: UIViewController {
     // MARK: - Actions
 
     @objc private func listenButtonTapped() {
-        if Auth.auth().currentUser?.isAnonymous == true {
-            showLoginPrompt(message: "Hikayeyi dinlemek için giriş yapmalısınız.")
-            return
-        }
+//        if Auth.auth().currentUser?.isAnonymous == true {
+//            showLoginPrompt(message: "Hikayeyi dinlemek için giriş yapmalısınız.")
+//            return
+//        }
 
         if viewModel.speechState == .playing || viewModel.speechState == .paused || viewModel.speechState == .loading {
             viewModel.togglePlayback()

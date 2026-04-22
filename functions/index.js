@@ -10,8 +10,7 @@ const db = admin.firestore();
 const auth = new GoogleAuth({ scopes: ["https://www.googleapis.com/auth/cloud-platform"] });
 const ttsClient = new textToSpeech.TextToSpeechClient();
 
-const TTS_PROMPT = `Sanki 5 yaşında bir çocuğun başucunda oturuyormuşsun gibi sıcak, nazik ve şefkatli bir tonda oku. 
-Kelimeleri tane tane telaffuz et. Hikayenin heyecanlı yerlerinde ses tonunu biraz yükseltip hızlan, 
+const TTS_PROMPT = `Sanki 5 yaşında bir çocuğun başucunda oturuyormuşsun gibi sıcak, nazik ve şefkatli bir tonda oku. Hikayenin heyecanlı yerlerinde ses tonunu biraz yükseltip hızlan, 
 gizemli veya huzurlu yerlerinde ise yavaşlayıp sesini hafifçe alçalt (fısıltıya yakın). 
 Türkçe vurgularına ve duraklamalarına dikkat ederek masalsı bir atmosfer yarat.`;
 
